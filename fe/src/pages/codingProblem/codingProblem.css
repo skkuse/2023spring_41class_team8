@@ -1,0 +1,65 @@
+.ethics_problem_container {
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  .ethics_problem_title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    font-weight: 800;
+    font-size: 40px;
+    color: var(--deep-purple);
+  }
+  
+  .ethics_problem_content {
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    height: 15%;
+    margin: 0px 10%;
+    padding: 20px;
+    font-size: 20px;
+    border: 1px solid var(--deep-purple);
+    border-radius: 15px;
+    margin-top: 30px;
+  }
+  .ethics_problem_content_text {
+    width: 100%;
+  }
+  
+  .ethics_problem_options {
+    width: 80%;
+    margin: 0px 10%;
+    display: flex;
+    justify-content: space-around;
+    font-size: 20px;
+    padding: 20px;
+    margin-top: 50px;
+  }
+  
+  .ethics_problem_option {
+    width: 400px;
+  }
+  .ethics_problem_option_text {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--deep-purple);
+  }
+  .ethics_problem_option_button {
+    width: 100%;
+    height: 52px;
+    font-size: 20px;
+    color: var(--deep-purple);
+    border: none;
+  }
+  
+  .ethics_result_option {
+    width: 360px;
+    border: 1px solid var(--deep-purple);
+    border-radius: 15px;
+    padding: 20px;
+  }
+  
