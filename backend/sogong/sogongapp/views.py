@@ -24,8 +24,8 @@ def get_gpt_answer(problem_text, problem_input, problem_output):
     answer = 'text'
     return answer
 
-#GPT의 답이 유효한지 확인하는 함수
-def gpt_answer_validation(gpt_answer, testcases):
+#답이 유효한지 확인하는 함수
+def answer_validation(answer, testcases):
     #!---GPT에게 넘겨주어야 코드와, 일련의 테스트 케이스 집합---!
     input_1 = testcases.case_input1
     input_2 = testcases.case_input2
@@ -37,6 +37,13 @@ def gpt_answer_validation(gpt_answer, testcases):
     output_4 = testcases.case_output4
     #!---정상적으로 통과했으면 True를, 통과하지 못했으면 False를 반환
     return True
+
+#사용자의 답의 피드백을 받는 함수
+def get_feedback(user_submission):
+    #!---피드백을 지피티로부터 받아서 피드백을 리턴---!
+    feedback = 'text'
+    return feedback
+
 
 
 
@@ -184,7 +191,7 @@ def coding_answer(request):
         testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
 
         # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
-        while gpt_answer_validation(gpt_answer, testcases) is False:
+        while answer_validation(gpt_answer, testcases) is False:
             print("GPT 답변에 문제가 있습니다.")
             gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output)
 
@@ -199,5 +206,33 @@ def coding_answer(request):
 
 
 
+def useranswer_view(request):
+    if request.method == "POST": # 회원가입
+        body = json.loads(request.body)
+        username = body.get("id")
+        pid = body.get("pid")
+        user_submission = body.get("answer")
+        problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
+        problem_title = problem_info.title
+        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
 
-        
+        if answer_validation(user_submission, testcases):
+            gpt_feedback = get_feedback(user_submission)
+            codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
+            codingSubmission.user_submission = user_submission
+            codingSubmission.gpt_feedback = gpt_feedback
+            codingSubmission.save()
+
+            response_data = {
+                "message": "정답입니다!",
+                "isPass" : True,
+                "feedback" : gpt_feedback,
+            }  
+        else:
+            response_data = {
+                "message": "틀렸습니다!",
+                "isPass" : False,
+                "feedback" : None,
+            }  
+        return JsonResponse(response_data)
+    
