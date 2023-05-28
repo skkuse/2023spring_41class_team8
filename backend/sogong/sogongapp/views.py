@@ -45,8 +45,6 @@ def get_feedback(user_submission):
     return feedback
 
 
-
-
 def register_view(request):
     if request.method == "POST": # 회원가입
         body = json.loads(request.body)
@@ -204,10 +202,8 @@ def coding_answer(request):
     }
     return JsonResponse(response_data)
 
-
-
 def useranswer_view(request):
-    if request.method == "POST": # 회원가입
+    if request.method == "POST": 
         body = json.loads(request.body)
         username = body.get("id")
         pid = body.get("pid")
@@ -216,23 +212,24 @@ def useranswer_view(request):
         problem_title = problem_info.title
         testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
 
+        #사용자의 답변이 정확한지 확인
         if answer_validation(user_submission, testcases):
             gpt_feedback = get_feedback(user_submission)
             codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
             codingSubmission.user_submission = user_submission
             codingSubmission.gpt_feedback = gpt_feedback
-            codingSubmission.save()
+            codingSubmission.save() #답변이 정답일 시 사용자의 답변과 피드백을 저장
 
             response_data = {
                 "message": "정답입니다!",
                 "isPass" : True,
                 "feedback" : gpt_feedback,
-            }  
+            }
         else:
             response_data = {
                 "message": "틀렸습니다!",
                 "isPass" : False,
                 "feedback" : None,
-            }  
+            }  #정답이 아닐 시 저장하지 않음
         return JsonResponse(response_data)
     
