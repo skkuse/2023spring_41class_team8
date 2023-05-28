@@ -6,6 +6,7 @@ from .models import SolvedEthics
 from .models import SolvedCoding
 from .models import CodingSubmission
 from .models import CodingTestCase
+from .models import EthicsSubmission
 import json
 import hashlib
 
@@ -44,7 +45,7 @@ def get_feedback(user_submission):
     feedback = 'text'
     return feedback
 
-
+# 로그인 및 회원가입 : 1번, 2번 
 def register_view(request):
     if request.method == "POST": # 회원가입
         body = json.loads(request.body)
@@ -78,14 +79,14 @@ def register_view(request):
         print()
         if user and check_password(user,pw): # db와 비교 
             # 로그인 성공
-            hash_object = hashlib.md5(id.encode())
-            hash_value = hash_object.hexdigest()
+            #hash_object = hashlib.md5(id.encode())
+            #hash_value = hash_object.hexdigest()
             
             response_data = {
             "message" : "로그인이 완료되었습니다.",
             "id" : id,
             "pw" : pw,
-            "cookie" : hash_value,
+            "cookie" : id,
         }
             return JsonResponse(response_data)
         else:
@@ -94,9 +95,10 @@ def register_view(request):
             "message" : "로그인이 실패했습니다"
         }
             return JsonResponse(response_data)
-    
+
+#유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
-    username = request.GET.get('username')
+    username = request.GET.get('token')
     solvedEthics_count = SolvedEthics.objects.filter(username=username).count() #해결 한 윤리 문제의 수
     solvedCoding_count = SolvedCoding.objects.filter(username=username).count() #해결 한 코딩 문제의 수
     ethicsProblem_count = EthicsProblem.objects.all().count() #전체 윤리 문제의 수
@@ -110,8 +112,62 @@ def userinfo_view(request):
     }
     return JsonResponse(response_data)
 
+#사용자 정보 업데이트 : 4번 
+def user_newinfo(request):
+    data = json.loads(request.body)
+    username = data.get('token')
+    solvedEthics_count = SolvedEthics.objects.filter(username=username).count() #해결 한 윤리 문제의 수
+    solvedCoding_count = SolvedCoding.objects.filter(username=username).count() #해결 한 코딩 문제의 수
+    ethicsProblem_count = EthicsProblem.objects.all().count() #전체 윤리 문제의 수
+    codingProblem_count = CodingProblem.objects.all().count() #전체 코딩 문제의 수
+    ethics_progress_rate = solvedEthics_count / ethicsProblem_count * 100 #윤리 문제 진행도 계산
+    coding_progress_rate = solvedCoding_count / codingProblem_count * 100 #코딩 문제 진행도 계산
+
+
+    response_data = {
+        "message" : "사용자의 진척도 입니다.",
+        "ethics_progress_rate" : ethics_progress_rate,
+        "coding_progress_rate" : coding_progress_rate,
+    }
+
+    ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
+    solvedEthics = SolvedEthics.objects.filter(username=username).all() #해결한 윤리 문제를 불러와서 저장
+    for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
+        solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
+        if solved_ethics is not None:
+            response_data.append({
+                "title": ethicsProblem.title,
+                "solved": True,
+            }) #존재시 해결한 문제임을 전송
+        else:
+            response_data.append({
+                "title": ethicsProblem.title,
+                "solved": False,
+            }) #부재시 해결한 적 없는 문제임을 전송
+    #전체 업데이트된 윤리문제 풀었는지 여부전송
+
+    codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
+    solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
+    for codingproblem in codingsProblems: #전체 문제 리스트 순회
+        solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
+        if solved_coding is not None:
+            response_data.append({
+                "title": codingproblem.title,
+                "solved": True,
+            }) #존재시 해결한 문제임을 전송
+        else:
+            response_data.append({
+                "title": codingproblem.title,
+                "solved": False,
+            }) #부재시 해결한 적 없는 문제임을 전송
+       #전체 업데이트된 코딩문제 풀었는지 여부 전송
+
+    return JsonResponse(response_data)
+
+
+#윤리문제 전체 전송 : 5번 
 def ethics_view(request):
-    username = request.GET.get('username')
+    username = request.GET.get('token')
     ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
     solvedEthics = SolvedEthics.objects.filter(username=username).all() #해결한 윤리 문제를 불러와서 저장
     response_data = []
@@ -140,8 +196,39 @@ def ethics_view(request):
     
     return JsonResponse(response_data)
 
+#윤리문제 선택 시 그것에 대한 피드백 전송 : 6번 
+def ethics_submission(request):
+    body = json.loads(request.body)
+    username = body.get("token")
+    pid = body.get("pid")
+    option = body.get("option") # 입력 데이터 받기 
+
+
+    ethicssubmission = EthicsSubmission.objects.get_or_create(user=username,problem=pid)
+    ethicssubmission.user_submission = option
+    ethicssubmission.save()#유저의 답변값 EthicsSubmission DB저장
+    
+    ethicsproblem = EthicsProblem.objects.get(title = pid)
+    optionA = ethicsproblem.optionA
+    optionB = ethicsproblem.optionB
+    submissionA = ethicsproblem.submissionA
+    submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
+
+    response_data = {
+        "optionA": optionA,
+        "optionB": optionB,
+        "submissionA": submissionA,
+        "submissionB": submissionB,
+    }
+    #피드백 보내기
+    return JsonResponse(response_data)
+
+
+    
+
+# 코딩문제 전체 전송 : 7번 
 def codings_view(request):
-    username = request.GET.get('username')
+    username = request.GET.get('token')
     codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
     solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
     response_data = []
@@ -168,9 +255,9 @@ def codings_view(request):
     
     return JsonResponse(response_data)
 
-
+# 코딩시 GPT답 전송 : 8번 
 def coding_answer(request):
-    username = request.GET.get('username')
+    username = request.GET.get('token')
     pid = request.GET.get('pid')
     problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
     problem_title = problem_info.title
@@ -202,10 +289,11 @@ def coding_answer(request):
     }
     return JsonResponse(response_data)
 
+# 유저 답 확인 : 9번 
 def useranswer_view(request):
     if request.method == "POST": 
         body = json.loads(request.body)
-        username = body.get("id")
+        username = body.get("token")
         pid = body.get("pid")
         user_submission = body.get("answer")
         problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
