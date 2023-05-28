@@ -72,7 +72,7 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
           }}>
           <Table style={{ width: "500px" }}>
             <TableHead>
-              <TableRow>
+              <TableRow style={{ backgroundColor: "#cac6ff" }}>
                 <TableCell>상태</TableCell>
                 <TableCell align="middle">문제 이름</TableCell>
               </TableRow>

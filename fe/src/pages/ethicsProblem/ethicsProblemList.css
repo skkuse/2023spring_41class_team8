@@ -1,6 +1,7 @@
 .ethics_problem_list_container {
   width: 100vw;
   height: 90%;
+  background-color: #f2f2f2;
 }
 .ethics_problem_percent {
   display: flex;
