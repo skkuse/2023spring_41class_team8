@@ -36,7 +36,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         messages.append({'role': 'user', 'content': prompt})
     elif method == 'getanswer':
         prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
-        messages.append(problem_content+prompt)
+        messages.append({'role':'user', 'content':problem_content+prompt})
 
     wait = 1
     while True:
@@ -83,7 +83,7 @@ def get_gpt_answer(problem_text, problem_input, problem_output):
     problem = '문제: \n' + problem_text + '\n입력: \n' + problem_input + '\n출력: \n' + problem_output
     answer = gpt_inference('getanswer', problem_content=problem)
     #!---GPT로 부터 받아온 코드를 answer에 넣고 answer를 반환
-    return answer
+    return answer[0]
 
 #답이 유효한지 확인하는 함수
 def answer_validation(answer, testcases):
@@ -98,7 +98,7 @@ def answer_validation(answer, testcases):
 def get_feedback(problem_content, user_submission):
     #!---피드백을 지피티로부터 받아서 피드백을 리턴---!
     response = gpt_inference('feedback',problem_content, answer= user_submission)
-    feedback = response
+    feedback = response[0]
     return feedback
 
 # 로그인 및 회원가입 : 1번, 2번 
@@ -354,7 +354,7 @@ def useranswer_view(request):
         user_submission = body.get("answer")
         problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
         problem_title = problem_info.title
-        problem_content = problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
+        problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
 
         testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
     
