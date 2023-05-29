@@ -39,6 +39,12 @@ class SolvedEthics(models.Model):
     user = models.ForeignKey(User, to_field='username', on_delete=models.CASCADE) # 해결 한 사람
     problem = models.ForeignKey(EthicsProblem, to_field='title', on_delete=models.CASCADE) # 해결 한 윤리 문제
 
+# 윤리 문제 제출 
+class EthicsSubmission(models.Model):
+    user = models.ForeignKey(User, to_field='username', on_delete=models.CASCADE) # 제출 한 사람
+    title = models.CharField(max_length=100, unique=True) # 윤리 문제의 제목
+    user_submission = models.CharField(max_length=100) # 유저가 제출한 옵션내용
+
 # 코드 문제 제출 및 정답 확인
 class CodingSubmission(models.Model):
     user = models.ForeignKey(User, to_field='username', on_delete=models.CASCADE) # 제출 한 사람
