@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+import sqlite3
 from .models import User
 from .models import EthicsProblem
 from .models import CodingProblem
@@ -379,3 +380,49 @@ def useranswer_view(request):
             }  #정답이 아닐 시 저장하지 않음
         return JsonResponse(response_data)
     
+"""
+codingProblem = CodingProblem.objects.all()
+codingProblem_count = CodingProblem.objects.all().count()
+print(codingProblem_count)
+
+
+database = "db.sqlite3"
+conn = sqlite3.connect(database)
+cursor = conn.cursor()
+
+cursor.execute("SELECT * FROM sogongapp_codingproblem")
+coding_problems = cursor.fetchall()
+
+for problem in coding_problems:
+    print("Title:", problem[1])
+    print("Level:", problem[2])
+    print("Problem Text:", problem[3])
+    print("Input Format:", problem[4])
+    print("Output Format:", problem[5])
+    print("Answer:", problem[6])
+    print("----------------------")
+
+cursor.close()
+conn.close()
+
+conn = sqlite3.connect(database)
+cursor = conn.cursor()
+
+cursor.execute("SELECT * FROM sogongapp_CodingTestCase")
+coding_problems = cursor.fetchall()
+
+for problem in coding_problems:
+    print("Title:", problem[0])
+    print("Input1:", problem[1])
+    print("Input2:", problem[2])
+    print("Input3:", problem[3])
+    print("Input4:", problem[4])
+    print("Output1:", problem[5])
+    print("Output2:", problem[6])
+    print("Output3:", problem[7])
+    print("Output4:", problem[8])
+    print("----------------------")
+
+cursor.close()
+conn.close()
+"""
