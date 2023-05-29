@@ -31,3 +31,4 @@ df.to_sql(name='sogongapp_CodingProblem', con = conn, if_exists='replace', dtype
 df2.to_sql(name="sogongapp_CodingTestcase", con = conn, if_exists='replace', dtype=dtype2, index=False)
 conn.commit()
 conn.close()
+print("Success")
