@@ -6,7 +6,7 @@ from .models import SolvedEthics
 from .models import SolvedCoding
 from .models import CodingSubmission
 from .models import CodingTestCase
-# from .models import EthicsSubmission
+from .models import EthicsSubmission
 import json
 import hashlib
 import openai
@@ -24,15 +24,20 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
     elif method == 'testcase':
         prompt = 'Code: \n' + answer
         tmp_message= ''
-        for i in range(4):
-            try:
-                tmp_message = f'case_input{i+1}: \n' + getattr(testcases, f'case_input{i+1}') + '\n' 
+        
+        try:
+            for i in range(4):
+                tmp_message += f'case_input{i+1}: \n' + getattr(testcases, f'case_input{i+1}') + '\n' 
                 tmp_message += f'case_output{i+1} : \n' + getattr(testcases, f'case_output{i+1}') +'\n'
-            except:
-                print(f'{i+1}번째 input case는 존재하지 않습니다.')
+        except:
+            print(f'{i+1}번째 input case는 존재하지 않습니다.')
         prompt += tmp_message
         prompt += getattr(gpt_prompts, 'GPT_CODE_CHECK')
         messages.append({'role': 'user', 'content': prompt})
+    elif method == 'getanswer':
+        prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
+        messages.append(problem_content+prompt)
+
     wait = 1
     while True:
         try:
@@ -75,25 +80,19 @@ def check_password(user, input_word): # 비밀번호 확인
 #GPT로 부터 답변을 얻어오는 함수
 def get_gpt_answer(problem_text, problem_input, problem_output):
     #!---GPT에게 넘겨주어야 할 것은 문제 텍스트, 문제의 입력값 예시, 문제의 출력값 예시---!
+    problem = '문제: \n' + problem_text + '\n입력: \n' + problem_input + '\n출력: \n' + problem_output
+    answer = gpt_inference('getanswer', problem_content=problem)
     #!---GPT로 부터 받아온 코드를 answer에 넣고 answer를 반환
-    answer = 'text'
     return answer
 
 #답이 유효한지 확인하는 함수
 def answer_validation(answer, testcases):
     #!---GPT에게 넘겨주어야 코드와, 일련의 테스트 케이스 집합---!
     response = gpt_inference('testcase', testcases=testcases, answer = answer)
-    input_1 = testcases.case_input1
-    input_2 = testcases.case_input2
-    input_3 = testcases.case_input3
-    input_4 = testcases.case_input4
-    output_1 = testcases.case_output1
-    output_2 = testcases.case_output2
-    output_3 = testcases.case_output3
-    output_4 = testcases.case_output4
-
+    if 'True' in response:
+        return True
+    else: return False
     #!---정상적으로 통과했으면 True를, 통과하지 못했으면 False를 반환
-    return True
 
 #사용자의 답의 피드백을 받는 함수
 def get_feedback(problem_content, user_submission):
@@ -335,7 +334,7 @@ def coding_answer(request):
         # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
         while answer_validation(gpt_answer, testcases) is False:
             print("GPT 답변에 문제가 있습니다.")
-            gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output)
+            gpt_answer = problem_info.answer
 
         codingSubmission = CodingSubmission(user=username, problem=problem_title, gpt_answer=gpt_answer, user_submission=None, gpt_feedback=None)
         codingSubmission.save() # 정상적 생성 이후 codingSubmission에 저장
@@ -358,9 +357,9 @@ def useranswer_view(request):
         problem_content = problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
 
         testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
-        
+    
         #사용자의 답변이 정확한지 확인
-        if answer_validation(problem_content, user_submission, testcases):
+        if answer_validation(user_submission, testcases):
             gpt_feedback = get_feedback(problem_content, user_submission)
             codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
             codingSubmission.user_submission = user_submission
