@@ -6,7 +6,7 @@ from .models import SolvedEthics
 from .models import SolvedCoding
 from .models import CodingSubmission
 from .models import CodingTestCase
-from .models import EthicsSubmission
+# from .models import EthicsSubmission
 import json
 import hashlib
 import openai
