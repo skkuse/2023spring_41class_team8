@@ -6,7 +6,7 @@ df2 = pd.read_csv('testcases.csv', encoding='EUC-KR')
 database = "db.sqlite3"
 conn = sqlite3.connect(database)
 dtype={
-    "title": "CharField" ,
+    "title": "CharField PRIMARY KEY" ,
     "level": "IntegerField", 
     "content_problem": "CharField", 
     "content_input":"CharField",
@@ -15,7 +15,7 @@ dtype={
     }
 
 dtype2={
-    "problem ": "CharField",
+    "problem ": "CharField PRIMARY KEY",
     "case_input1 ": "CharField",
    " case_input2 ": "CharField",
    " case_input3 ": "CharField",

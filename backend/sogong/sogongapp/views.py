@@ -23,14 +23,14 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         messages.append({'role': 'user', 'content': prompt})
     elif method == 'testcase':
         prompt = 'Code: \n' + answer
-        tmp_message= ''
-        
         try:
+            tmp_message= ''
             for i in range(4):
+                if getattr(testcases, f'case_input{i+1}') == 'None': break
                 tmp_message += f'case_input{i+1}: \n' + getattr(testcases, f'case_input{i+1}') + '\n' 
                 tmp_message += f'case_output{i+1} : \n' + getattr(testcases, f'case_output{i+1}') +'\n'
         except:
-            print(f'{i+1}번째 input case는 존재하지 않습니다.')
+            print(f'\ntestcase 개수 부족: \n {i+1}번째 input case는 존재하지 않습니다.\n')
         prompt += tmp_message
         prompt += getattr(gpt_prompts, 'GPT_CODE_CHECK')
         messages.append({'role': 'user', 'content': prompt})
@@ -67,7 +67,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         except openai.error.APIConnectionError:
             print('openai.error.APIConnectionError')
             import time
-            time.sleep(min(wait, 60))    
+            time.sleep(min(wait, 60))   
 
 def check_password(user, input_word): # 비밀번호 확인
     password = user.password
