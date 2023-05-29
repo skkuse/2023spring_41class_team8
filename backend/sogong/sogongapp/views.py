@@ -8,6 +8,60 @@ from .models import CodingSubmission
 from .models import CodingTestCase
 import json
 import hashlib
+import openai
+import sogongapp.gpt_prompts as gpt_prompts
+from .API_KEY import OPENAI_API_KEY  
+
+openai.api_key = OPENAI_API_KEY
+
+def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
+    messages = []
+    if method == 'feedback':
+        prompt = getattr(gpt_prompts, 'GPT_CODE_FEEDBACK')
+        prompt = '문제: \n' + problem_content + '\n' + '답변 CODE: \n'+ answer + '\n' + prompt
+        messages.append({'role': 'user', 'content': prompt})
+    elif method == 'testcase':
+        prompt = 'Code: \n' + answer
+        tmp_message= ''
+        for i in range(4):
+            try:
+                tmp_message = f'case_input{i+1}: \n' + getattr(testcases, f'case_input{i+1}') + '\n' 
+                tmp_message += f'case_output{i+1} : \n' + getattr(testcases, f'case_output{i+1}') +'\n'
+            except:
+                print(f'{i+1}번째 input case는 존재하지 않습니다.')
+        prompt += tmp_message
+        prompt += getattr(gpt_prompts, 'GPT_CODE_CHECK')
+        messages.append({'role': 'user', 'content': prompt})
+    wait = 1
+    while True:
+        try:
+            response = openai.ChatCompletion.create(
+                model='gpt-3.5-turbo',
+                temperature=1.0,
+                messages=messages
+            )
+            content = [response['choices'][i]['message']['content'] for i in range(1)]
+            return content
+        except openai.error.RateLimitError:
+            print('openai.error.RateLimitError')
+            import time
+            time.sleep(min(wait, 60))
+        except openai.error.ServiceUnavailableError:
+            print('openai.error.ServiceUnavailableError')
+            import time
+            time.sleep(min(wait, 60))
+        except openai.error.InvalidRequestError:
+            print('openai.error.InvalidRequestError')
+            import time
+            time.sleep(min(wait, 60))
+        except openai.error.APIError:
+            print('openai.error.APIError')
+            import time
+            time.sleep(min(wait, 60))
+        except openai.error.APIConnectionError:
+            print('openai.error.APIConnectionError')
+            import time
+            time.sleep(min(wait, 60))    
 
 def check_password(user, input_word): # 비밀번호 확인
     password = user.password
@@ -27,6 +81,7 @@ def get_gpt_answer(problem_text, problem_input, problem_output):
 #답이 유효한지 확인하는 함수
 def answer_validation(answer, testcases):
     #!---GPT에게 넘겨주어야 코드와, 일련의 테스트 케이스 집합---!
+    response = gpt_inference('testcase', testcases=testcases, answer = answer)
     input_1 = testcases.case_input1
     input_2 = testcases.case_input2
     input_3 = testcases.case_input3
@@ -35,13 +90,15 @@ def answer_validation(answer, testcases):
     output_2 = testcases.case_output2
     output_3 = testcases.case_output3
     output_4 = testcases.case_output4
+
     #!---정상적으로 통과했으면 True를, 통과하지 못했으면 False를 반환
     return True
 
 #사용자의 답의 피드백을 받는 함수
-def get_feedback(user_submission):
+def get_feedback(problem_content, user_submission):
     #!---피드백을 지피티로부터 받아서 피드백을 리턴---!
-    feedback = 'text'
+    response = gpt_inference('feedback',problem_content, answer= user_submission)
+    feedback = response
     return feedback
 
 
@@ -177,7 +234,7 @@ def coding_answer(request):
     problem_text = problem_info.content_problem
     problem_input = problem_info.content_input
     problem_output = problem_info.content_output
-    gpt_answer = ''  #gpt 답안을 받을 변수 선언
+    gpt_answer = problem_info.content_output  #gpt 답안을 받을 변수 선언
 
     #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
     try:  
@@ -210,11 +267,13 @@ def useranswer_view(request):
         user_submission = body.get("answer")
         problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
         problem_title = problem_info.title
-        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+        problem_content = problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
 
+        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+        
         #사용자의 답변이 정확한지 확인
-        if answer_validation(user_submission, testcases):
-            gpt_feedback = get_feedback(user_submission)
+        if answer_validation(problem_content, user_submission, testcases):
+            gpt_feedback = get_feedback(problem_content, user_submission)
             codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
             codingSubmission.user_submission = user_submission
             codingSubmission.gpt_feedback = gpt_feedback

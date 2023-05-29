@@ -1,5 +1,12 @@
 from django.db import models
 
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sogong.settings")
+
+import django
+django.setup()
+
+from django.core.management import call_command
 # 윤리 문제 테이블
 class EthicsProblem(models.Model):
     title = models.CharField(max_length=100, unique=True) # 윤리 문제의 제목
@@ -16,6 +23,7 @@ class CodingProblem(models.Model):
     content_problem = models.CharField(max_length=200) # 코딩 문제의 문제글
     content_input = models.CharField(max_length=200) # 코딩 문제의 입력 포맷 설명
     content_output = models.CharField(max_length=200) # 코딩 문제의 출력 포맷 설명
+    answer = models.CharField(max_length=3000)
 
 # 사용자 테이블
 class User(models.Model):

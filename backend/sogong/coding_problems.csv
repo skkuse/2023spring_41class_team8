@@ -1,0 +1,403 @@
+title,level,content_problem,content_input,content_output,answer
+보물,1,"옛날 옛적에 수학이 항상 큰 골칫거리였던 나라가 있었다. 이 나라의 국왕 김지민은 다음과 같은 문제를 내고 큰 상금을 걸었다. 길이가 N인 정수 배열 A와 B가 있다. 다음과 같이 함수 S를 정의하자. S = A[0] × B[0] + ... + A[N-1] × B[N-1] S의 값을 가장 작게 만들기 위해 A의 수를 재배열하자. 단, B에 있는 수는 재배열하면 안 된 다. S의 최솟값을 출력하는 프로그램을 작성하시오. "," 첫째 줄에 N이 주어진다. 둘째 줄에는 A에 있는 N개의 수가 순서대로 주어지고, 셋째 줄에는 B에 있는 수가 순서대로 주어진다. N은 50보다 작거나 같은 자연수이고, A와 B의 각 원소는 100보다 작거나 같은 음이 아닌 정수이다..",  첫째 줄에 S의 최솟값을 출력한다,A.sort() # 배열 A를 오름차순으로 정렬 B.sort(reverse=True) # 배열 B를 내림차순으로 정렬 현서_문제 2 S = 0 # 변수 S를 초기화 for i in range(N): S += A[i] * B[i] # A와 B의 각 요소를 순서대로 곱하여 S에 더함 print(S) # S의 값을 출력
+체스판 다시 칠하기,1,"지민이는 자신의 저택에서 MN개의 단위 정사각형으로 나누어져 있는 M×N 크기의 보드를 찾았다. 어떤 정사각형은 검은색으로 칠해져 있고, 나머지는 흰색으로 칠해져 있다. 지민이 는 이 보드를 잘라서 8×8 크기의 체스판으로 만들려고 한다. 체스판은 검은색과 흰색이 번갈아서 칠해져 있어야 한다. 구체적으로, 각 칸이 검은색과 흰 색 중 하나로 색칠되어 있고, 변을 공유하는 두 개의 사각형은 다른 색으로 칠해져 있어야 한 다. 따라서 이 정의를 따르면 체스판을 색칠하는 경우는 두 가지뿐이다. 하나는 맨 왼쪽 위 칸이 흰색인 경우, 하나는 검은색인 경우이다. 보드가 체스판처럼 칠해져 있다는 보장이 없어서, 지민이는 8×8 크기의 체스판으로 잘라낸 후에 몇 개의 정사각형을 다시 칠해야겠다고 생각했다. 당연히 8*8 크기는 아무데서나 골라 도 된다. 지민이가 다시 칠해야 하는 정사각형의 최소 개수를 구하는 프로그램을 작성하시오.
+"," 첫째 줄에 N과 M이 주어진다. N과 M은 8보다 크거나 같고, 50보다 작거나 같은 자연수이다. 둘째 줄부터 N개의 줄에는 보드의 각 행의 상태가 주어진다. B는 검은색이며, W는 흰색이다", 첫째 줄에 지민이가 다시 칠해야 하는 정사각형 개수의 최솟값을 출력한다.,"N, M = map(int, input().split()) # 보드의 크기 N과 M을 입력 받음 board = [] # 보드의 상태를 저장할 2차원 배열 for _ in range(N): row = input() # 보드의 각 행의 상태를 입력 받음 board.append(list(row)) 현서_문제 3 min_count = float('inf') # 다시 칠해야 하는 정사각형 개수의 최솟값을 저장할 변수, 큰 값으로 초기화 for i in range(N - 7): # 8x8 체스판을 만들기 위한 행 범위 for j in range(M - 7): # 8x8 체스판을 만들기 위한 열 범위 count_white = 0 # 맨 왼쪽 위 칸이 흰색인 경우의 다시 칠해야 하는 정사각형 개수 count_black = 0 # 맨 왼쪽 위 칸이 검은색인 경우의 다시 칠해야 하는 정사각형 개수 for x in range(i, i + 8): for y in range(j, j + 8): if (x + y) % 2 == 0: # 예상되는 색깔과 다른 경우 if board[x][y] != 'W': count_white += 1 if board[x][y] != 'B': count_black += 1 else: # 예상되는 색깔과 다른 경우 if board[x][y] != 'B': count_white += 1 if board[x][y] != 'W': count_black += 1 min_count = min(min_count, count_white, count_black) # 최솟값을 갱신 print(min_count) # 다시 칠해야 하는 정사각형 개수의 최솟값을 출력"
+A+B,1,"두 정수 A와 B를 입력받은 다음,?A+B를 출력하는 프로그램을 작성하시오"," 첫째 줄에 A와 B가 주어진다. (0 < A, B < 10)", 첫째 줄에 A+B를 출력한다.,"A, B = map(int, input().split()) # 정수 A와 B를 입력받음 result = A + B # A와 B를 더하여 결과를 계산 print(result) # 결과 출력"
+행렬,1,"0과 1로만 이루어진 행렬 A와 행렬 B가 있다. 이때, 행렬 A를 행렬 B로 바꾸는데 필요한 연 산의 횟수의 최솟값을 구하는 프로그램을 작성하시오. 행렬을 변환하는 연산은 어떤 3×3크기의 부분 행렬에 있는 모든 원소를 뒤집는 것이다. (0 → 1, 1 → 0)"," 첫째 줄에 행렬의 크기 N M이 주어진다. N과 M은 50보다 작거나 같은 자연수이다. 둘째 줄부터 N개의 줄에는 행렬 A가 주어지고, 그 다음줄부터 N개의 줄에는 행렬 B가 주어진다.", 첫째 줄에 문제의 정답을 출력한다. 만약 A를 B로 바꿀 수 없다면 -1을 출력한다.,"N, M = map(int, input().split()) # N과 M 입력받기 A = [list(map(int, input())) for _ in range(N)] # 행렬 A 입력받기 B = [list(map(int, input())) for _ in range(N)] # 행렬 B 입력받기 def flip_submatrix(matrix, row, col): for i in range(row, row + 3): for j in range(col, col + 3): matrix[i][j] = 1 - matrix[i][j] def count_operations(matrix1, matrix2): count = 0 for i in range(N - 2): for j in range(M - 2): if matrix1[i][j] != matrix2[i][j]: flip_submatrix(matrix1, i, j) count += 1 return count if A == B: print(0) else: operations = count_operations(A, B) if A == B: print(operations) else: print(-1)"
+직사각형,1,"한수는 지금 (x, y)에 있다. 직사각형은 각 변이 좌표축에 평행하고,?왼쪽 아래 꼭짓점은 (0, 0), 오른쪽 위 꼭짓점은 (w, h)에 있다. 직사각형의 경계선까지 가는 거리의 최솟값을 구하는 프로그램을 작성하시오."," 첫째 줄에 x,y,w,h가 주어진다.
+제한: 1 ≤ w, h ≤ 1,000
+1 ≤ x ≤ w-1
+1 ≤ y ≤ h-1
+x, y, w, h는 정수", 첫째 줄에 문제의 정답을 출력한다.,"x, y, w, h = map(int, input().split()) # x, y, w, h 입력받기 distances = [x, y, w - x, h - y] # 경계선까지의 거리 계산 min_distance = min(distances) # 최솟값 계산 print(min_distance) # 최솟값 출력"
+최소 버튼 조작 방법 찾기,1,"3개의 시간조절용 버튼 A B C가 달린 전자레인지가 있다. 각 버튼마다 일정한 시간이 지정되어 있어 해당 버튼을 한번 누를 때마다 그 시간이 동작시간에 더해진다. 버튼 A, B, C에 지정된 시간은 각각 5분, 1분, 10초이다.
+냉동음식마다 전자레인지로 요리해야할 시간 T가 초단위로 표시되어 있다. 우리는 A, B, C 3개의 버튼을 적절히 눌러서 그 시간의 합이 정확히 T초가 되도록 해야 한다. 단 버튼 A, B, C를 누른 횟수의 합은 항상 최소가 되어야 한다. 이것을 최소버튼 조작이라고 한다.
+만일 요리시간이 100초라고 하면(T=100) B를 1번, C는 4번 누르면 된다. 이와 다르게 C를 10번 눌러도 100초가 되지만 이 경우 10번은 최소 횟수가 아니기 때문이 답이 될 수 없다. 이 경우 B 1번, C 4번, 총 5번이 최소버튼 조작이다. 그리고 T=234와 같이 3개의 버튼으로 시간을 정확히 맞출 수 없는 경우도 있다.
+여러분은 주어진 요리시간 T초를 맞추기 위한 최소버튼 조작 방법을 구하는 프로그램을 작성해야 한다."," 첫 번째 줄에는 요리시간 T(초)가 정수로 주어져 있으며 그 범위는 1 ≤ T ≤ 10,000 이다.", 여러분은 T초를 위한 최소버튼 조작의 A B C 횟수를 첫 줄에 차례대로 출력해야 한다. 각각의 횟수 사이에는 빈 칸을 둔다. 해당 버튼을 누르지 않는 경우에는 숫자 0을 출력해야한다. 만일 제시된 3개의 버튼으로 T초를 맞출 수 없으면 음수 -1을 첫 줄에 출력해야 한다.,"def find_min_buttons(T):
+    # A, B, C 버튼에 대한 시간 설정
+    times = [300, 60, 10]  # 각 버튼의 시간을 초로 변환하여 리스트에 저장
+
+    # A, B, C 버튼을 누르는 횟수를 0으로 초기화
+    counts = [0, 0, 0]
+
+    # T를 맞추기 위한 최소버튼 조작 방법 찾기
+    for i in range(len(times)):
+        if T >= times[i]:
+            counts[i] = T // times[i]
+            T %= times[i]
+
+    # T를 정확히 맞출 수 없는 경우 -1 반환
+    if T != 0:
+        return -1
+
+    # 버튼 누르는 횟수 출력
+    return counts[0], counts[1], counts[2]
+
+
+# 입력 받기
+T = int(input())
+
+# 최소버튼 조작 방법 찾기
+result = find_min_buttons(T)
+
+# 결과 출력
+if result == -1:
+    print(-1)
+else:
+    print(result[0], result[1], result[2])"
+주사위 게임,1,"창영이와 상덕이는 게임을 하고 있다.
+게임을 시작하는 시점에서, 두 사람의 점수는 모두 100점이다.
+게임은 여섯 면 주사위를 사용하며, 라운드로 진행된다. 매 라운드마다, 각 사람은 주사위를 던진다. 낮은 숫자가 나온 사람은 상대편 주사위에 나온 숫자만큼 점수를 잃게 된다. 두 사람의 주사위가 같은 숫자가 나온 경우에는 아무도 점수를 잃지 않는다.
+게임이 끝난 이후에 두 사람의 점수를 구하는 프로그램을 작성하시오."," 첫째 줄에 라운드의 수 n (1 ≤ n ≤ 15)가 주어진다. 다음 n개 줄에는 두 정수가 주어진다. 첫 번째 정수는 그 라운드에서 창영이의 주사위에 나타난 숫자, 두 번째 정수는 상덕이의 주사위에 나타난 숫자이다. 두 정수는 항상 1보다 크거나 같고, 6보다 작거나 같다."," 첫째 줄에 게임이 끝난 이후에 창영이의 점수, 둘째 줄에는 상덕이의 점수를 출력한다.","def calculate_scores(rounds):
+    chang_score = 100  # 창영이의 초기 점수
+    sang_score = 100  # 상덕이의 초기 점수
+
+    for round in rounds:
+        chang_dice, sang_dice = round
+
+        if chang_dice > sang_dice:
+            sang_score -= chang_dice
+        elif chang_dice < sang_dice:
+            chang_score -= sang_dice
+
+    return chang_score, sang_score
+
+
+# 입력 받기
+n = int(input())
+rounds = []
+for _ in range(n):
+    chang_dice, sang_dice = map(int, input().split())
+    rounds.append((chang_dice, sang_dice))
+
+# 점수 계산
+result = calculate_scores(rounds)
+
+# 결과 출력
+print(result[0])
+print(result[1])"
+대소비교,2,"두 양의 정수가 주어졌을 때, 첫 번째 수가 두 번째 수보다 큰지 구하는 프로그램을 작성하시오.","입력은 여러 개의 테스트 케이스로 이루어져 있다. 각 테스트 케이스는 한 줄로 이루어져 있으며, 두 정수가 주어진다. 두 수는 백만보다 작거나 같은 양의 정수이다. 입력의 마지막 줄에는 0이 두 개 주어진다.","각 테스트 케이스마다, 첫 번째 수가 두 번째 수보다 크면 Yes를, 아니면 No를 한 줄에 하나씩 출력한다.","while True:
+    a, b = map(int, input().split())
+
+    if a == 0 and b == 0:
+        break
+
+    if a > b:
+        print(""Yes"")
+    else:
+        print(""No"")"
+그룹 단어 체커,2,"그룹 단어란 단어에 존재하는 모든 문자에 대해서, 각 문자가 연속해서 나타나는 경우만을 말한다. 예를 들면, ccazzzzbb는 c, a, z, b가 모두 연속해서 나타나고, kin도 k, i, n이 연속해서 나타나기 때문에 그룹 단어이지만, aabbbccb는 b가 떨어져서 나타나기 때문에 그룹 단어가 아니다.
+단어 N개를 입력으로 받아 그룹 단어의 개수를 출력하는 프로그램을 작성하시오.","첫째 줄에 단어의 개수 N이 들어온다. N은 100보다 작거나 같은 자연수이다. 둘째 줄부터 N개의 줄에 단어가 들어온다. 단어는 알파벳 소문자로만 되어있고 중복되지 않으며, 길이는 최대 100이다.",첫째 줄에 그룹 단어의 개수를 출력한다.,"N = int(input())
+
+count = 0
+for _ in range(N):
+    word = input()
+    char_set = set()
+    prev_char = ''
+    is_group_word = True
+    for char in word:
+        if char != prev_char:  # 이전 문자와 다른 경우
+            if char in char_set:  # 이미 나온 적 있는 문자인 경우
+                is_group_word = False
+                break
+            char_set.add(char)
+        prev_char = char
+    if is_group_word:
+        count += 1
+
+print(count)"
+접미사 배열,2,"접미사 배열은 문자열 S의 모든 접미사를 사전순으로 정렬해 놓은 배열이다.
+baekjoon의 접미사는 baekjoon, aekjoon, ekjoon, kjoon, joon, oon, on, n 으로 총 8가지가 있고, 이를 사전순으로 정렬하면, aekjoon, baekjoon, ekjoon, joon, kjoon, n, on, oon이 된다.
+문자열 S가 주어졌을 때, 모든 접미사를 사전순으로 정렬한 다음 출력하는 프로그램을 작성하시오.","첫째 줄에 문자열 S가 주어진다. S는 알파벳 소문자로만 이루어져 있고, 길이는 1,000보다 작거나 같다",첫째 줄부터 S의 접미사를 사전순으로 한 줄에 하나씩 출력한다.,"S = input()
+suffixes = [S[i:] for i in range(len(S))]  # S의 모든 접미사 생성
+suffixes.sort()  # 접미사 정렬
+
+for suffix in suffixes:
+    print(suffix)"
+날짜 계산,2,"준규가 사는 나라는 우리가 사용하는 연도와 다른 방식을 이용한다. 준규가 사는 나라에서는 수 3개를 이용해서 연도를 나타낸다. 각각의 수는 지구, 태양, 그리고 달을 나타낸다.
+지구를 나타내는 수를 E, 태양을 나타내는 수를 S, 달을 나타내는 수를 M이라고 했을 때, 이 세 수는 서로 다른 범위를 가진다. (1 ≤ E ≤ 15, 1 ≤ S ≤ 28, 1 ≤ M ≤ 19)
+우리가 알고있는 1년은 준규가 살고있는 나라에서는 1 1 1로 나타낼 수 있다. 1년이 지날 때마다, 세 수는 모두 1씩 증가한다. 만약, 어떤 수가 범위를 넘어가는 경우에는 1이 된다.
+예를 들어, 15년은 15 15 15로 나타낼 수 있다. 하지만, 1년이 지나서 16년이 되면 16 16 16이 아니라 1 16 16이 된다. 이유는 1 ≤ E ≤ 15 라서 범위를 넘어가기 때문이다.
+E, S, M이 주어졌고, 1년이 준규가 사는 나라에서 1 1 1일때, 준규가 사는 나라에서 E S M이 우리가 알고 있는 연도로 몇 년인지 구하는 프로그램을 작성하시오.","첫째 줄에 세 수 E, S, M이 주어진다. 문제에 나와있는 범위를 지키는 입력만 주어진다.","첫째 줄에 E S M으로 표시되는 가장 빠른 연도를 출력한다. 1 1 1은 항상 1이기 때문에, 정답이 음수가 나오는 경우는 없다.","E, S, M = map(int, input().split())
+
+year = 1
+while True:
+    if year % 15 == E % 15 and year % 28 == S % 28 and year % 19 == M % 19:
+        break
+    year += 1
+
+print(year)"
+면의 개수 세기,2,"수학자가 구를 깎아서 볼록다면체를 만들었다. 이 수학자는 임의의 볼록다면체에 대해 (꼭짓점의 수) - (모서리의 수) + (면의 수) = 2가 성립한다는 것을 알고 있다. 그래서 구를 깎는 게 취미인 이 사람은 꼭짓점, 모서리와 면의 수를 기록할 때 꼭짓점과 모서리의 수만 세고 면의 수는 세지 않는다.","첫 번째 줄에 1 이상 100 이하의 자연수 T가 주어진다.
+다음 T개의 줄에 4 이상 100 이하의 자연수 V와 E가 공백을 사이에 두고 주어진다. V와 E는 각각 꼭짓점의 개수와 모서리의 개수이다.",각 V와 E에 대해 볼록다면체의 면의 수를 한 줄에 하나씩 출력한다.,"T = int(input())
+
+for _ in range(T):
+    V, E = map(int, input().split())
+    F = 2 - V + E
+    print(F)"
+대칭 차집합,2,"자연수를 원소로 갖는 공집합이 아닌 두 집합 A와 B가 있다. 이때, 두 집합의 대칭 차집합의 원소의 개수를 출력하는 프로그램을 작성하시오. 두 집합 A와 B가 있을 때, (A-B)와 (B-A)의 합집합을 A와 B의 대칭 차집합이라고 한다.
+예를 들어, A = { 1, 2, 4 } 이고, B = { 2, 3, 4, 5, 6 } 라고 할 때,  A-B = { 1 } 이고, B-A = { 3, 5, 6 } 이므로, 대칭 차집합의 원소의 개수는 1 + 3 = 4개이다.","첫째 줄에 집합 A의 원소의 개수와 집합 B의 원소의 개수가 빈 칸을 사이에 두고 주어진다. 둘째 줄에는 집합 A의 모든 원소가, 셋째 줄에는 집합 B의 모든 원소가 빈 칸을 사이에 두고 각각 주어진다. 각 집합의 원소의 개수는 200,000을 넘지 않으며, 모든 원소의 값은 100,000,000을 넘지 않는다.",첫째 줄에 대칭 차집합의 원소의 개수를 출력한다.,"N, M = map(int, input().split())
+set_A = set(map(int, input().split()))
+set_B = set(map(int, input().split()))
+
+diff1 = len(set_A - set_B)  # (A-B)의 원소 개수
+diff2 = len(set_B - set_A)  # (B-A)의 원소 개수
+
+symmetric_diff = diff1 + diff2  # 대칭 차집합의 원소 개수
+
+print(symmetric_diff)"
+얻을 수 있는 점수의 최대값 구하기,2,"웅찬이는 과제가 많다. 하루에 한 과제를 끝낼 수 있는데, 과제마다 마감일이 있으므로 모든 과제를 끝내지 못할 수도 있다. 과제마다 끝냈을 때 얻을 수 있는 점수가 있는데, 마감일이 지난 과제는 점수를 받을 수 없다.
+웅찬이는 가장 점수를 많이 받을 수 있도록 과제를 수행하고 싶다. 웅찬이를 도와 얻을 수 있는 점수의 최댓값을 구하시오.","첫 줄에 정수 N (1 ≤ N ≤ 1,000)이 주어진다.
+다음 줄부터 N개의 줄에는 각각 두 정수 d (1 ≤ d ≤ 1,000)와 w (1 ≤ w ≤ 100)가 주어진다. d는 과제 마감일까지 남은 일수를 의미하며, w는 과제의 점수를 의미한다.",얻을 수 있는 점수의 최댓값을 출력한다.,"N = int(input())  # 과제 개수 입력
+
+assignments = []  # 과제 정보를 담을 리스트 초기화
+
+# 과제 정보 입력 받기
+for _ in range(N):
+    d, w = map(int, input().split())
+    assignments.append((d, w))
+
+# 마감일을 기준으로 내림차순으로 정렬
+assignments.sort(reverse=True)
+
+# 마감일이 가장 늦은 날부터 시작하여 최대 점수를 구함
+max_score = 0
+due_date = max(assignments, key=lambda x: x[0])[0]  # 가장 늦은 마감일
+
+for day in range(due_date, 0, -1):  # 가장 늦은 마감일부터 역순으로 탐색
+    available_assignments = [assignment for assignment in assignments if assignment[0] >= day]
+    if available_assignments:
+        max_score += max(available_assignments, key=lambda x: x[1])[1]  # 가장 높은 점수의 과제 선택
+        assignments.remove(max(available_assignments, key=lambda x: x[1]))  # 선택한 과제 제거
+
+print(max_score)  # 최대 점수 출력 "
+일치 여부 확인1,3,"N개의 정수 A[1], A[2], …, A[N]이 주어져 있을 때, 이 안에 X라는 정수가 존재하는지 알아내는 프로그램을 작성하시오.","첫째 줄에 자연수 N(1 ≤ N ≤ 100,000)이 주어진다. 다음 줄에는 N개의 정수 A[1], A[2], …, A[N]이 주어진다. 다음 줄에는 M(1 ≤ M ≤ 100,000)이 주어진다. 다음 줄에는 M개의 수들이 주어지는데, 이 수들이 A안에 존재하는지 알아내면 된다. 모든 정수의 범위는 -231 보다 크거나 같고 231보다 작다.","M개의 줄에 답을 출력한다. 존재하면 1을, 존재하지 않으면 0을 출력한다.","def binary_search(arr, target):
+    left = 0
+    right = len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        
+        if arr[mid] == target:
+            return 1
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    
+    return 0
+
+# 입력 처리 함수
+def process_input():
+    N = int(input())  # 정수의 개수
+    arr = list(map(int, input().split()))  # 정수 배열
+    M = int(input())  # 찾을 정수의 개수
+    targets = list(map(int, input().split()))  # 찾을 정수 배열
+    
+    return N, arr, M, targets
+
+# 메인 함수
+def main():
+    N, arr, M, targets = process_input()
+    
+    # 배열 정렬
+    arr.sort()
+    
+    # 각 정수에 대해 이진 탐색하여 존재 여부 확인 후 출력
+    for target in targets:
+        result = binary_search(arr, target)
+        print(result)
+
+if __name__ == ""__main__"":
+    main() "
+일치 여부 확인2,3,"숫자 카드는 정수 하나가 적혀져 있는 카드이다. 상근이는 숫자 카드 N개를 가지고 있다. 정수 M개가 주어졌을 때, 이 수가 적혀있는 숫자 카드를 상근이가 몇 개 가지고 있는지 구하는 프로그램을 작성하시오.","첫째 줄에 상근이가 가지고 있는 숫자 카드의 개수 N(1 ≤ N ≤ 500,000)이 주어진다. 둘째 줄에는 숫자 카드에 적혀있는 정수가 주어진다. 숫자 카드에 적혀있는 수는 -10,000,000보다 크거나 같고, 10,000,000보다 작거나 같다.
+셋째 줄에는 M(1 ≤ M ≤ 500,000)이 주어진다. 넷째 줄에는 상근이가 몇 개 가지고 있는 숫자 카드인지 구해야 할 M개의 정수가 주어지며, 이 수는 공백으로 구분되어져 있다. 이 수도 -10,000,000보다 크거나 같고, 10,000,000보다 작거나 같다.","첫째 줄에 입력으로 주어진 M개의 수에 대해서, 각 수가 적힌 숫자 카드를 상근이가 몇 개 가지고 있는지를 공백으로 구분해 출력한다.","from collections import Counter
+
+# 입력 처리 함수
+def process_input():
+    N = int(input())  # 상근이가 가지고 있는 숫자 카드의 개수
+    cards = list(map(int, input().split()))  # 숫자 카드에 적힌 정수들
+    M = int(input())  # 구해야 할 숫자 카드의 개수
+    targets = list(map(int, input().split()))  # 구해야 할 숫자 카드들
+    
+    return N, cards, M, targets
+
+# 메인 함수
+def main():
+    N, cards, M, targets = process_input()
+    
+    # 숫자 카드 개수를 세는 Counter 객체 생성
+    card_counter = Counter(cards)
+    
+    # 각 숫자 카드 개수 출력
+    for target in targets:
+        count = card_counter[target]
+        print(count, end=' ')
+
+if __name__ == ""__main__"":
+    main() "
+일치 여부 확인3,3,"연종이는 엄청난 기억력을 가지고 있다. 그래서 하루 동안 본 정수들을 모두 기억 할 수 있다. 하지만 이를 믿을 수 없는 동규는 그의 기억력을 시험해 보기로 한다. 동규는 연종을 따라 다니며, 연종이 하루 동안 본 정수들을 모두 ‘수첩1’에 적어 놓았다. 그것을 바탕으로 그가 진짜 암기왕인지 알아보기 위해, 동규는 연종에게 M개의 질문을 던졌다. 질문의 내용은 “X라는 정수를 오늘 본 적이 있는가?” 이다. 연종은 막힘없이 모두 대답을 했고, 동규는 연종이 봤다고 주장하는 수 들을 ‘수첩2’에 적어 두었다. 집에 돌아온 동규는 답이 맞는지 확인하려 하지만, 연종을 따라다니느라 너무 힘들어서 여러분에게 도움을 요청했다. 동규를 도와주기 위해 ‘수첩2’에 적혀있는 순서대로, 각각의 수에 대하여, ‘수첩1’에 있으면 1을, 없으면 0을 출력하는 프로그램을 작성해보자.","첫째 줄에 테스트케이스의 개수 T가 들어온다. 다음 줄에는 ‘수첩 1’에 적어 놓은 정수의 개수 N(1 ≤ N ≤ 1,000,000)이 입력으로 들어온다. 그 다음 줄에  ‘수첩 1’에 적혀 있는 정수들이 N개 들어온다. 그 다음 줄에는 ‘수첩 2’에 적어 놓은 정수의 개수 M(1 ≤ M ≤ 1,000,000) 이 주어지고, 다음 줄에 ‘수첩 2’에 적어 놓은 정수들이 입력으로 M개 들어온다. 모든 정수들의 범위는 int 로 한다.","‘수첩2’에 적혀있는 M개의 숫자 순서대로, ‘수첩1’에 있으면 1을, 없으면 0을 출력한다.","def check_numbers(N, numbers1, M, numbers2):
+    num_set = set(numbers1)  # 수첩 1에 적혀 있는 정수들을 집합으로 변환
+
+    results = []
+    for num in numbers2:
+        if num in num_set:  # 수첩 2의 정수가 수첩 1에 있으면 1을 결과 리스트에 추가
+            results.append(1)
+        else:  # 수첩 2의 정수가 수첩 1에 없으면 0을 결과 리스트에 추가
+            results.append(0)
+
+    return results
+
+# 입력 처리 및 결과 출력
+if __name__ == ""__main__"":
+    T = int(input())  # 테스트 케이스 개수 입력
+
+    for _ in range(T):
+        N = int(input())  # 수첩 1에 적혀 있는 정수의 개수 입력
+        numbers1 = list(map(int, input().split()))  # 수첩 1의 정수들 입력
+
+        M = int(input())  # 수첩 2에 적혀 있는 정수의 개수 입력
+        numbers2 = list(map(int, input().split()))  # 수첩 2의 정수들 입력
+
+        results = check_numbers(N, numbers1, M, numbers2)
+        print(' '.join(map(str, results))) "
+확률 계산,3,"통제 할 수 없는 미친 로봇이 평면위에 있다. 그리고 이 로봇은 N번의 행동을 취할 것이다.
+각 행동에서 로봇은 4개의 방향 중에 하나를 임의로 선택한다. 그리고 그 방향으로 한 칸 이동한다.
+로봇이 같은 곳을 한 번보다 많이 이동하지 않을 때, 로봇의 이동 경로가 단순하다고 한다. (로봇이 시작하는 위치가 처음 방문한 곳이다.) 로봇의 이동 경로가 단순할 확률을 구하는 프로그램을 작성하시오. 예를 들어, EENE와 ENW는 단순하지만, ENWS와 WWWWSNE는 단순하지 않다. (E는 동, W는 서, N은 북, S는 남)","첫째 줄에 N, 동쪽으로 이동할 확률, 서쪽으로 이동할 확률, 남쪽으로 이동할 확률, 북쪽으로 이동할 확률이 주어진다. N은 14보다 작거나 같은 자연수이고,  모든 확률은 100보다 작거나 같은 자연수 또는 0이다. 그리고, 동서남북으로 이동할 확률을 모두 더하면 100이다.
+확률의 단위는 %이다.",첫째 줄에 로봇의 이동 경로가 단순할 확률을 출력한다. 절대/상대 오차는 10-9 까지 허용한다.,"def robot_path_probability(N, east_prob, west_prob, south_prob, north_prob):
+    # 동, 서, 남, 북에 대한 이동 확률
+    probs = [east_prob/100, west_prob/100, south_prob/100, north_prob/100]
+
+    # 방문한 위치를 저장하는 집합
+    visited = set()
+
+    # 재귀 함수를 통해 로봇의 이동 경로를 생성하고 단순한 경로의 개수를 센다
+    def generate_path(x, y, n, prob):
+        # N번의 행동을 마쳤을 때
+        if n == N:
+            return prob
+
+        # 로봇의 현재 위치
+        current_pos = (x, y)
+
+        # 단순한 경로의 개수 초기화
+        simple_paths = 0
+
+        # 동, 서, 남, 북으로 이동
+        for dx, dy, p in [(1, 0, probs[0]), (-1, 0, probs[1]), (0, -1, probs[2]), (0, 1, probs[3])]:
+            next_pos = (x + dx, y + dy)
+            
+            # 이동한 위치가 처음 방문한 곳인 경우
+            if next_pos not in visited:
+                visited.add(next_pos)
+                
+                # 다음 위치로 이동하며 단순한 경로의 개수를 누적한다
+                simple_paths += generate_path(next_pos[0], next_pos[1], n + 1, prob * p)
+                
+                # 방문 기록을 삭제하여 다른 경로로 이동 가능하게 한다
+                visited.remove(next_pos)
+
+        # 단순한 경로의 개수를 반환
+        return simple_paths
+
+    # 시작 위치를 (0, 0)으로 초기화
+    start_pos = (0, 0)
+    visited.add(start_pos)
+
+    # 로봇의 이동 경로가 단순한 확률을 계산
+    simple_path_prob = generate_path(0, 0, 0, 1)
+
+    return simple_path_prob
+
+
+# 입력 처리 및 결과 출력
+if __name__ == ""__main__"":
+    N, east_prob, west_prob, south_prob, north_prob = map(int, input().split())
+    result = robot_path_probability(N, east_prob, west_prob, south_prob, north_prob)
+    print(result) "
+영화감독 숌 문제,3,"666은 종말을 나타내는 수라고 한다. 따라서, 많은 블록버스터 영화에서는 666이 들어간 제목을 많이 사용한다. 영화감독 숌은 세상의 종말 이라는 시리즈 영화의 감독이다. 조지 루카스는 스타워즈를 만들 때, 스타워즈 1, 스타워즈 2, 스타워즈 3, 스타워즈 4, 스타워즈 5, 스타워즈 6과 같이 이름을 지었고, 피터 잭슨은 반지의 제왕을 만들 때, 반지의 제왕 1, 반지의 제왕 2, 반지의 제왕 3과 같이 영화 제목을 지었다. 하지만 숌은 자신이 조지 루카스와 피터 잭슨을 뛰어넘는다는 것을 보여주기 위해서 영화 제목을 좀 다르게 만들기로 했다. 종말의 수란 어떤 수에 6이 적어도 3개 이상 연속으로 들어가는 수를 말한다. 제일 작은 종말의 수는 666이고, 그 다음으로 큰 수는 1666, 2666, 3666, .... 이다. 따라서, 숌은 첫 번째 영화의 제목은 ""세상의 종말 666"", 두 번째 영화의 제목은 ""세상의 종말 1666""와 같이 이름을 지을 것이다. 일반화해서 생각하면, N번째 영화의 제목은 세상의 종말 (N번째로 작은 종말의 수) 와 같다. 숌이 만든 N번째 영화의 제목에 들어간 수를 출력하는 프로그램을 작성하시오. 숌은 이 시리즈를 항상 차례대로 만들고, 다른 영화는 만들지 않는다.","첫째 줄에 N이 주어진다. N은 10,000보다 작거나 같은 자연수이다.",첫째 줄에 666이 들어가는 수 중 N번째로 큰 수를 출력한다.,"def get_movie_title(N):
+    base = 666  # 시작 종말의 수
+    count = 0  # 종말의 수 개수 카운트
+
+    while True:
+        if '666' in str(base):  # 종말의 수인 경우
+            count += 1
+
+        if count == N:  # N번째 종말의 수인 경우
+            return base
+
+        base += 1
+
+# 입력 받기
+N = int(input())
+
+# N번째 영화의 제목에 들어간 수 구하기
+result = get_movie_title(N)
+
+# 결과 출력
+print(result)"
+수들의 합 문제,3,"N개의 수로 된 수열 A[1], A[2], …, A[N] 이 있다. 이 수열의 i번째 수부터 j번째 수까지의 합 A[i] + A[i+1] + … + A[j-1] + A[j]가 M이 되는 경우의 수를 구하는 프로그램을 작성하시오. ","첫째 줄에 N(1 ≤ N ≤ 10,000), M(1 ≤ M ≤ 300,000,000)이 주어진다. 다음 줄에는 A[1], A[2], …, A[N]이 공백으로 분리되어 주어진다. 각각의 A[x]는 30,000을 넘지 않는 자연수이다.",첫째 줄에 경우의 수를 출력한다. ,"def count_subarray_sum(arr, target_sum):
+    count = 0
+    prefix_sum = 0
+    prefix_sum_count = {0: 1}  # Dictionary to store count of prefix sums
+
+    for num in arr:
+        prefix_sum += num
+        count += prefix_sum_count.get(prefix_sum - target_sum, 0)
+        prefix_sum_count[prefix_sum] = prefix_sum_count.get(prefix_sum, 0) + 1
+
+    return count
+
+# 입력 받기
+N, M = map(int, input().split())
+A = list(map(int, input().split()))
+
+# 경우의 수 계산
+result = count_subarray_sum(A, M)
+
+# 결과 출력
+print(result)"
+반올림 문제,3,"정수 N이 주어져 있을 때 이 수가 10보다 크면 일의 자리에서 반올림을 하고, 이 결과가 100보다 크면 다시 10의 자리에서 반올림을 하고, 또 이 수가 1000보다 크면 100의 자리에서 반올림을 하고.. (이하 생략) 이러한 연산을 한 결과를 출력하시오. ","첫째 줄에 정수 N이 주어진다. (0 ≤ N ≤ 99,999,999) ",첫째 줄에 위와 같은 연산을 한 결과를 출력하시오.,"def round_up(N):
+    power_of_ten = 10
+    while N >= power_of_ten:
+        N = (N + power_of_ten // 2) // power_of_ten * power_of_ten
+        power_of_ten *= 10
+    return N
+
+# 입력 받기
+N = int(input())
+
+# 반올림 연산 수행
+N = round_up(N)
+
+# 결과 출력
+print(N)"
+최대 공약수와 최소 공배수 ,3,두 개의 자연수를 입력받아 최대 공약수와 최소 공배수를 출력하는 프로그램을 작성하시오,"첫째 줄에는 두 개의 자연수가 주어진다. 이 둘은 10,000이하의 자연수이며 사이에 한 칸의 공백이 주어진다","첫째 줄에는 입력으로 주어진 두 수의 최대공약수를, 둘째 줄에는 입력으로 주어진 두 수의 최소 공배수를 출력한다. ","def gcd(a, b):
+    # 유클리드 호제법을 이용하여 최대 공약수를 구하는 함수
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    # 최소 공배수를 구하는 함수
+    return (a * b) // gcd(a, b)
+
+# 두 개의 자연수 입력 받기
+num1, num2 = map(int, input().split())
+
+# 최대 공약수 계산
+greatest_common_divisor = gcd(num1, num2)
+
+# 최소 공배수 계산
+least_common_multiple = lcm(num1, num2)
+
+# 결과 출력
+print(greatest_common_divisor)
+print(least_common_multiple)"
+나머지 문제 ,3,"두 자연수 A와 B가 있을 때, A%B는 A를 B로 나눈 나머지 이다. 예를 들어, 7, 14, 27, 38을 3으로 나눈 나머지는 1, 2, 0, 2이다. 수 10개를 입력받은 뒤, 이를 42로 나눈 나머지를 구한다. 그 다음 서로 다른 값이 몇 개 있는지 출력하는 프로그램을 작성하시오. ","첫째 줄부터 열번째 줄 까지 숫자가 한 줄에 하나씩 주어진다. 이 숫자는 1,000보다 작거나 같고, 음이 아닌 정수이다.","첫째 줄에, 42로 나누었을 때, 서로 다른 나머지가 몇 개 있는지 출력한다. ","remainders = set()  # 서로 다른 나머지를 저장할 집합
+
+for _ in range(10):
+    num = int(input())
+    remainder = num % 42
+    remainders.add(remainder)
+
+count = len(remainders)
+print(count)"
