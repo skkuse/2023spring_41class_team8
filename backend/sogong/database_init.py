@@ -12,6 +12,8 @@ dtype={
     "content_output" :"CharField",
     "answer": "CharField"
     }
+
+
 df.to_sql(name='sogongapp_CodingProblem', con = conn, if_exists='replace', dtype=dtype, index = True, index_label = "id")
 conn.commit()
 conn.close()

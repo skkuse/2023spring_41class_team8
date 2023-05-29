@@ -321,7 +321,7 @@ def coding_answer(request):
     problem_text = problem_info.content_problem
     problem_input = problem_info.content_input
     problem_output = problem_info.content_output
-    gpt_answer = problem_info.content_output  #gpt 답안을 받을 변수 선언
+    gpt_answer = ''  #gpt 답안을 받을 변수 선언
 
     #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
     try:  
