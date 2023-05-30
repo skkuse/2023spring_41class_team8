@@ -5,11 +5,8 @@ from .models import EthicsProblem
 from .models import CodingProblem
 from .models import SolvedEthics
 from .models import SolvedCoding
-from .models import CodingSubmission
 from .models import CodingTestCase
-from .models import EthicsSubmission
 import json
-import hashlib
 import openai
 import sogongapp.gpt_prompts as gpt_prompts
 from .API_KEY import OPENAI_API_KEY  
@@ -253,7 +250,6 @@ def user_newinfo(request):
     return JsonResponse(response_data)
 
 
-#윤리문제 전체 전송 : 5번 
 def ethics_view(request):
     username = request.GET.get('token')
     ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
@@ -284,64 +280,64 @@ def ethics_view(request):
     
     return JsonResponse(response_data)
 
-#윤리문제 선택 시 그것에 대한 피드백 전송 : 6번 
+#선택한 윤리 문제에 대한 A, B 결과 : 4번
 def ethics_submission(request):
     body = json.loads(request.body)
-    username = body.get("token")
     pid = body.get("pid")
-    option = body.get("option") # 입력 데이터 받기 
-
-
-    ethicssubmission = EthicsSubmission.objects.get_or_create(user=username,problem=pid)
-    ethicssubmission.user_submission = option
-    ethicssubmission.save()#유저의 답변값 EthicsSubmission DB저장
+    username = body.get("email")
     
-    ethicsproblem = EthicsProblem.objects.get(title = pid)
-    optionA = ethicsproblem.optionA
-    optionB = ethicsproblem.optionB
-    submissionA = ethicsproblem.submissionA
-    submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
+    if username is not None: #토큰값 있는 경우
+        ethicsproblem = EthicsProblem.objects.get(id = pid)
+        submissionA = ethicsproblem.submissionA
+        submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
+        
+        results = []
+        results.append(submissionA)
+        results.append(submissionB)
 
-    response_data = {
-        "optionA": optionA,
-        "optionB": optionB,
-        "submissionA": submissionA,
-        "submissionB": submissionB,
-    }
+        response_data = {
+            "results":results,
+        }
     #피드백 보내기
-    return JsonResponse(response_data)
+        return JsonResponse(response_data)
+    
+    else: # 토큰값 없는 경우
+        results =[]
+        response_data = {
+            "results":results,
+        }
+
+        return JsonResponse(response_data)
 
 
     
 
-# 코딩문제 전체 전송 : 7번 
+# 코딩문제 전체 전송 : 5번 
 def codings_view(request):
-    username = request.GET.get('token')
+    username = request.GET.get('email')
     codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
-    solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
-    response_data = []
-    for codingproblem in codingsProblems: #전체 문제 리스트 순회
-        solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
-        if solved_coding is not None:
-            response_data.append({
-                "title": codingproblem.title,
-                "level": codingproblem.level,
-                "content": codingproblem.content_problem,
-                "input": codingproblem.content_input,
-                "output": codingproblem.content_output,
-                "solved": True,
-            }) #존재시 해결한 문제임을 전송
-        else:
-            response_data.append({
-                "title": codingproblem.title,
-                "level": codingproblem.level,
-                "content": codingproblem.content_problem,
-                "input": codingproblem.content_input,
-                "output": codingproblem.content_output,
-                "solved": False,
-            }) #부재시 해결한 적 없는 문제임을 전송
+
+    if username is not None:
+        codingproblem = []
+
+        for problem in codingsProblems:
+            codingproblem.append({
+                "pid": problem.id,
+                "title": problem.title,
+                "level": problem.level,
+                "content": problem.content_problem,
+                "input": problem.content_input,
+                "output": problem.content_output,
+            })
+    else:
+        codingproblem =[]
     
+    response_data = {
+        "codingproblem":codingproblem
+    }
+
     return JsonResponse(response_data)
+
 
 # 코딩시 GPT답 전송 : 8번 
 def coding_answer(request):
