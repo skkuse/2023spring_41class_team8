@@ -371,7 +371,11 @@ def coding_answer(request):
             "answer" : gpt_answer,
         }
         return JsonResponse(response_data)
-
+    else:
+        response_data = {
+            "answer" : "",
+        }
+        return JsonResponse(response_data)
 # 유저 답 확인 : 7번 
 def useranswer_view(request):
     if request.method == "POST": 
@@ -405,6 +409,12 @@ def useranswer_view(request):
                     "result" : "fail",
                     "feedback" : "",
                 }  #
+            return JsonResponse(response_data)
+        else:
+            response_data = {
+                "result" : "",
+                "feedback" : "",
+            }  #
             return JsonResponse(response_data)
     
 """
