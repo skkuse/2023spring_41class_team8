@@ -366,10 +366,10 @@ def coding_answer(request):
         gpt_answer = ''  #gpt 답안을 받을 변수 선언
 
         #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
-        try:  
+        if problem_info.gpt_answer is not None:
             gpt_answer = problem_info.gpt_answer
         #해결한 적 없는 경우 GPT에게 요청
-        except CodingSubmission.DoesNotExist:
+        else:
             gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
             testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
 
@@ -404,11 +404,18 @@ def useranswer_view(request):
         
             #사용자의 답변이 정확한지 확인
             if is_timeout:
-                gpt_feedback = get_feedback(problem_content, user_submission)
-                response_data = {
-                    "result" : "fail",
-                    "feedback" : gpt_feedback,
-                }
+                if answer_validation(user_submission, testcases):
+                    gpt_feedback = get_feedback(problem_content, user_submission)
+                    response_data = {
+                        "result" : "pass",
+                        "feedback" : gpt_feedback,
+                    }
+                else:
+                    gpt_feedback = get_feedback(problem_content, user_submission)
+                    response_data = {
+                        "result" : "fail",
+                        "feedback" : gpt_feedback,
+                    }
             elif answer_validation(user_submission, testcases):
                 gpt_feedback = get_feedback(problem_content, user_submission)
                 response_data = {
