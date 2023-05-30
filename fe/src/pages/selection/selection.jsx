@@ -4,7 +4,7 @@ import "./selection.css"; // Import the CSS file
 
 function Selection() {
     const navigate = useNavigate();
-
+    console.log('hello')
     const handleCoding = (e) => {
         navigate("/coding");
     };

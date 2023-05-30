@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import sqlite3
 from .models import User
 from .models import EthicsProblem
@@ -11,6 +11,7 @@ from .models import EthicsSubmission
 import json
 import hashlib
 import openai
+
 import sogongapp.gpt_prompts as gpt_prompts
 from .API_KEY import OPENAI_API_KEY  
 
@@ -153,9 +154,21 @@ def login_view(request):
             "solvedEthicsProblems" : solvedEthicsProblems,
         }
 
-    return JsonResponse(response_data)
+def user_idcheck(request):
+    if request.method == "GET":
+        id = request.GET.get('email')
+        try:
+            user = User.objects.get(username=id)
+            response_data = {
+                "status": 501
+            }
+        except User.DoesNotExist:
+            response_data = {
+                "status": 200
+            }
+        print(response_data)
+        return JsonResponse(response_data)
 
-"""
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
     username = request.GET.get('token')
@@ -250,7 +263,7 @@ def user_newinfo(request):
        #전체 업데이트된 코딩문제 풀었는지 여부 전송
 
     return JsonResponse(response_data)
-"""
+
 
 #윤리문제 전체 전송 : 3번 
 def ethics_view(request):
