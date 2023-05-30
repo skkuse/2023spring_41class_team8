@@ -113,8 +113,7 @@ def register_view(request):
         body = json.loads(request.body)
         id = body.get("email")
         pw = body.get("password")
-        print(id, pw)
-        user = User(username=id, password=pw) # id, email, password
+        user = User(username=id, password=pw) #  email, password
         if User.objects.filter(username=id).exists():
             response_data = {
             "message": "이미 존재하는 회원입니다.",
@@ -122,6 +121,8 @@ def register_view(request):
             "pw" : pw
         } # 이미 회원 정보가 존재하는 경우
         else:
+            
+            print(id, pw)
             user.save()   
             response_data = {
             "message": "회원가입이 완료되었습니다.",
