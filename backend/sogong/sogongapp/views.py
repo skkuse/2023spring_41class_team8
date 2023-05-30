@@ -157,6 +157,21 @@ def register_view(request):
         }
             return JsonResponse(response_data)
 
+def user_idcheck(request):
+    if request.method == "GET":
+    
+        id = request.GET.get('email')
+        try:
+            user = User.objects.get(username=id)
+            response_data = {
+                "status": 200
+            }
+        except:
+            response_data = {
+                "status": 501
+            }
+        return JsonResponse(response_data)
+
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
     username = request.GET.get('token')
