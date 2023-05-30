@@ -263,7 +263,7 @@ def user_newinfo(request):
        #전체 업데이트된 코딩문제 풀었는지 여부 전송
 
     return JsonResponse(response_data)
-"""
+
 
 #윤리문제 전체 전송 : 3번 
 def ethics_view(request):

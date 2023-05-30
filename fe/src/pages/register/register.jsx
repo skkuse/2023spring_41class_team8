@@ -58,14 +58,14 @@ const Register = () => {
         // Login successful, update user info and navigate to the desired page
         const data = await response.json();
         setDuplicatePopup(true);
+        // status 값 200이면 가능 501이면 중복
         if (data.status === 200){
           setDuplicatePopup(false);
           setSuccessPopup(true);
         }
         else if(data.status===501){
-          setDuplicatePopup(true);
-          setSuccessPopup(false); // 중복된 이메일이 없다면 에러 해제
-           // 중복 확인 성공 팝업 설정
+          setDuplicatePopup(true); 
+          setSuccessPopup(false); 
         }
       } else {
         // Login failed, display failure message
