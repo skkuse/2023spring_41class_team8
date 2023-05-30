@@ -20,6 +20,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   const [userAnswer, setUserAnswer] = useState("");
   const [Feedback, setAIFeedBack] = useState("잘했어요");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [timer, setTimer] = useState(0);
 
   const [code, setCode] = useState(pythonDefault);
   const [AIcode, setAICode] = useState(correctAnswer[0].answer);
@@ -45,6 +46,22 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       setTheme({ value: "oceanic-next", label: "Oceanic Next" })
     );
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => prevTimer + 1);
+    }, 1000);
+
+    // 도달하면 handleSaveAnswer 실행 및 타이머 정리
+    if (timer === data.level*20) {
+      handleSaveAnswer();
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timer]);
 
   // 코드 변경 시 호출되는 함수
   const onChange = (action, value) => {
