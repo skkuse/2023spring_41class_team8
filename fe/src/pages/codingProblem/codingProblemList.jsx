@@ -60,6 +60,7 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
             <TableBody>
               {data.map((row) => (
                 <TableRow
+                  style={{ cursor: "pointer" }}
                   hover
                   onClick={() => onClickProblem(row)}
                   key={row.title}

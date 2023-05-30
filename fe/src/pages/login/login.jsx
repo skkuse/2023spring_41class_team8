@@ -43,7 +43,6 @@ function Login({ getUserInfo, updateUserInfo }) {
     ///// 정보가 있다면
     updateUserInfo({
       id: 0,
-      username: "test",
       email: email,
       password: password,
       solvedCodingProblems: [1, 4, 5],
