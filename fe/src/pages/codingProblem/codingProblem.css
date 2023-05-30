@@ -1,0 +1,63 @@
+.coding_problem_container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .coding_problem_content {
+    flex: 1;
+    display: flex;
+  }
+
+  .coding_problem_editor {
+    flex: 1;
+    position: relative;
+    padding: 10px;
+  }
+  
+  .coding_problem_aianswer {
+    flex: 1;
+    position: relative;
+    padding: 10px;
+  }
+
+  .coding_problem_editor button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--deep-purple);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .coding_problem_editor button:hover {
+    background-color: #031f3e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .coding_problem_aianswer button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--deep-purple);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .coding_problem_aianswer button:hover {
+    background-color: #031f3e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
