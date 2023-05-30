@@ -14,6 +14,7 @@ export const defaultUserInfo = {
   password: "test",
   solvedCodingProblems: [1, 4, 5],
   solvedEthicsProblems: [0, 4, 9, 11],
+  score: 0,
 };
 
 function App() {
