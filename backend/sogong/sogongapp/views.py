@@ -107,57 +107,55 @@ def get_feedback(problem_content, user_submission):
     feedback = gpt_inference('feedback',problem_content, answer= user_submission)
     return feedback
 
-# 로그인 및 회원가입 : 1번, 2번 
-def register_view(request):
-    if request.method == "POST": # 회원가입
-        body = json.loads(request.body)
-        id = body.get("id")
-        email = body.get("email")
-        pw = body.get("pw")
-        user = User(username=id, email=email, password=pw) # id, email, password
-        if User.objects.filter(username=id).exists():
-            response_data = {
-            "message": "이미 존재하는 회원입니다.",
-            "id" : id,
-            "email" : email,
-            "pw" : pw
-        } # 이미 회원 정보가 존재하는 경우
-        else:
-            user.save()   
-            response_data = {
-            "message": "회원가입이 완료되었습니다.",
-            "id" : id,
-            "email" : email,
-            "pw" : pw
-        } # 새로 만든 경우
-    
-        
-        return JsonResponse(response_data)
-    
-    else:
-        id = request.GET.get('id')
-        pw = request.GET.get('pw')
-        user = User.objects.get(username=id)
-        print()
-        if user and check_password(user,pw): # db와 비교 
-            # 로그인 성공
-            #hash_object = hashlib.md5(id.encode())
-            #hash_value = hash_object.hexdigest()
-            
-            response_data = {
-            "message" : "로그인이 완료되었습니다.",
-            "id" : id,
-            "pw" : pw,
-            "cookie" : id,
-        }
-            return JsonResponse(response_data)
-        else:
-            # 로그인 실패
-            response_data = {
-            "message" : "로그인이 실패했습니다"
-        }
-            return JsonResponse(response_data)
 
+# 로그인  : 1번
+def login_view(request):
+    email = request.GET.get('email')
+    password = request.GET.get('password')
+    user = User.objects.get(username=email)
+
+    if user and check_password(user,password): # db와 비교 
+        # 로그인 성공      
+        solvedEthicsProblems = []
+        solvedCodingProblems = []
+        get_scored = 0        
+        total_score = 0
+        percentage_score = 0
+        ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
+        solvedEthics = SolvedEthics.objects.filter(username=email).all() #해결한 윤리 문제를 불러와서 저장
+        for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
+            solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
+            if solved_ethics is not None:
+                solvedEthicsProblems.append(ethicsProblem.id)
+
+        codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
+        solvedCodings = SolvedCoding.objects.filter(username=email).all() #해결한 코딩 문제를 불러와서 저장
+        for codingproblem in codingsProblems: #전체 문제 리스트 순회
+            total_score += int(codingproblem.level)
+            solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
+            if solved_coding is not None:
+                get_scored += int(codingproblem.level)
+                solvedCodingProblems.append(codingproblem.id)
+
+        percentage_score = get_scored / total_score * 100
+        
+        response_data = {
+            "email" : email,
+            "score" : percentage_score,
+            "solvedCodingProblems" : solvedCodingProblems,
+            "solvedEthicsProblems" : solvedEthicsProblems,
+        }
+    else:
+        response_data = {
+            "email" : None,
+            "score" : 0,
+            "solvedCodingProblems" : solvedCodingProblems,
+            "solvedEthicsProblems" : solvedEthicsProblems,
+        }
+
+    return JsonResponse(response_data)
+
+"""
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
     username = request.GET.get('token')
@@ -225,7 +223,7 @@ def user_newinfo(request):
        #전체 업데이트된 코딩문제 풀었는지 여부 전송
 
     return JsonResponse(response_data)
-
+"""
 
 #윤리문제 전체 전송 : 5번 
 def ethics_view(request):
