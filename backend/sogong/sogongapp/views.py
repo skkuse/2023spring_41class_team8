@@ -16,15 +16,19 @@ from .API_KEY import OPENAI_API_KEY
 
 openai.api_key = OPENAI_API_KEY
 
+# gpt로부터 response를 얻어오는 코드
 def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
     messages = []
+    # feedback 얻어올시 문제, 입력형식, 출력형식과 함께 사용자가 입력한 코드 전송
     if method == 'feedback':
         prompt = getattr(gpt_prompts, 'GPT_CODE_FEEDBACK')
         prompt = '문제: \n' + problem_content + '\n' + '답변 CODE: \n'+ answer + '\n' + prompt
         messages.append({'role': 'user', 'content': prompt})
+    # testcase확인시 사용자가 입력한 코드와 testcase 전송
     elif method == 'testcase':
         prompt = 'Code: \n' + answer
         try:
+            # testcase 최대 4개, 4개보다 적을 경우, 존재하는 testcase만 포함
             tmp_message= ''
             for i in range(4):
                 if getattr(testcases, f'case_input{i+1}') == 'None': break
@@ -35,6 +39,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         prompt += tmp_message
         prompt += getattr(gpt_prompts, 'GPT_CODE_CHECK')
         messages.append({'role': 'user', 'content': prompt})
+    # 문제에 대한 gpt의 answer를 불러올 시 문제와 python code 요청
     elif method == 'getanswer':
         prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
         messages.append({'role':'user', 'content':problem_content+prompt})
@@ -47,7 +52,8 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
                 temperature=1.0,
                 messages=messages
             )
-            content = [response['choices'][i]['message']['content'] for i in range(1)]
+            # message의 content 부분이 gpt response 
+            content = response['choices'][0]['message']['content'] 
             return content
         except openai.error.RateLimitError:
             print('openai.error.RateLimitError')
@@ -74,7 +80,7 @@ def check_password(user, input_word): # 비밀번호 확인
     password = user.password
 
     if input_word == password:
-        return True
+        return True 
     else:
         return False
     
@@ -84,7 +90,7 @@ def get_gpt_answer(problem_text, problem_input, problem_output):
     problem = '문제: \n' + problem_text + '\n입력: \n' + problem_input + '\n출력: \n' + problem_output
     answer = gpt_inference('getanswer', problem_content=problem)
     #!---GPT로 부터 받아온 코드를 answer에 넣고 answer를 반환
-    return answer[0]
+    return answer
 
 #답이 유효한지 확인하는 함수
 def answer_validation(answer, testcases):
@@ -98,8 +104,7 @@ def answer_validation(answer, testcases):
 #사용자의 답의 피드백을 받는 함수
 def get_feedback(problem_content, user_submission):
     #!---피드백을 지피티로부터 받아서 피드백을 리턴---!
-    response = gpt_inference('feedback',problem_content, answer= user_submission)
-    feedback = response[0]
+    feedback = gpt_inference('feedback',problem_content, answer= user_submission)
     return feedback
 
 # 로그인 및 회원가입 : 1번, 2번 
