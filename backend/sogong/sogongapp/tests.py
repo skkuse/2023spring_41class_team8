@@ -37,7 +37,8 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
                 temperature=1.0,
                 messages=messages
             )
-            content = [response['choices'][i]['message']['content'] for i in range(1)]
+            print(response)
+            content = response['choices'][0]['message']['content']
             return content
         except openai.error.RateLimitError:
             print('openai.error.RateLimitError')
@@ -86,14 +87,14 @@ cur = conn.cursor()
 # SQL 쿼리 실행
 cur.execute("select * from sogongapp_codingproblem where title='주사위 게임'")
 row = cur.fetchone()
-problem_text = row[3]
-problem_input = row[4]
-problem_output = row[5]
-answer = row[6]
+problem_text = row[2]
+problem_input = row[3]
+problem_output = row[4]
+answer = row[5]
 problem_content = '문제: \n'+ problem_text + '\n입력 : ' + problem_input + '\n 출력: ' + problem_output
 cur.execute("select * from sogongapp_codingtestcase where problem='주사위 게임'")
 row1 = cur.fetchone()
-print('title :' +row[1] +'\n'+'problem :'+ row[3])
+print('title :' +row[0] +'\n'+'problem :'+ row[2])
 print(row1)
 class testcase:
     def __init__(self, row1):
@@ -107,10 +108,10 @@ class testcase:
         self.case_output4 = row1[8]
 testcases = testcase(row1) 
 gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output)
-print('gpt가 푼 답: \n'+ gpt_answer[0])
+print('gpt가 푼 답: \n'+ gpt_answer)
 
-answer_validation_response = answer_validation(gpt_answer[0], testcases)
+answer_validation_response = answer_validation(gpt_answer, testcases)
 print('정답 validation: ' + str(answer_validation_response))
 
-gpt_feedback = get_feedback(problem_content , gpt_answer[0])
-print('gpt feedback:' + gpt_feedback[0])
+gpt_feedback = get_feedback(problem_content , gpt_answer)
+print('gpt feedback:' + gpt_feedback)
