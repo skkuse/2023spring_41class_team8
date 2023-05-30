@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import sqlite3
 from .models import User
 from .models import EthicsProblem
@@ -11,6 +11,7 @@ from .models import EthicsSubmission
 import json
 import hashlib
 import openai
+
 import sogongapp.gpt_prompts as gpt_prompts
 from .API_KEY import OPENAI_API_KEY  
 
@@ -159,17 +160,17 @@ def register_view(request):
 
 def user_idcheck(request):
     if request.method == "GET":
-    
         id = request.GET.get('email')
         try:
             user = User.objects.get(username=id)
             response_data = {
-                "status": 200
-            }
-        except:
-            response_data = {
                 "status": 501
             }
+        except User.DoesNotExist:
+            response_data = {
+                "status": 200
+            }
+        print(response_data)
         return JsonResponse(response_data)
 
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
