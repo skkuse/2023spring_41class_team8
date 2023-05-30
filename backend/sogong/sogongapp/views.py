@@ -158,7 +158,7 @@ def register_view(request):
             return JsonResponse(response_data)
 
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
-def userinfo_view(request):
+"""def userinfo_view(request):
     username = request.GET.get('token')
     solvedEthics_count = SolvedEthics.objects.filter(username=username).count() #해결 한 윤리 문제의 수
     solvedCoding_count = SolvedCoding.objects.filter(username=username).count() #해결 한 코딩 문제의 수
@@ -171,7 +171,34 @@ def userinfo_view(request):
         "ethics_progress_rate" : ethics_progress_rate,
         "coding_progress_rate" : coding_progress_rate,
     }
+    return JsonResponse(response_data)"""
+
+
+#유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 수정
+def userinfo_view(request):
+    username = request.GET.get('token')
+    solved_ethics_list = []
+    solved_coding_list = []
+    ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
+    solvedEthics = SolvedEthics.objects.filter(username=username).all() #해결한 윤리 문제를 불러와서 저장
+    for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
+        solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
+        if solved_ethics is not None:
+            solved_ethics_list.append(ethicsProblem.id) #존재시 해결한 문제 번호를 저장
+
+        codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
+    solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
+    for codingproblem in codingsProblems: #전체 문제 리스트 순회
+        solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
+        if solved_coding is not None:
+            solved_coding_list.append(codingproblem.id) #존재시 해결한 문제 번호를 저장
+    
+    response_data = {
+        "solvedCodingProblems" : solved_coding_list,
+        "solvedEthicsProblems" : solved_ethics_list,
+    }
     return JsonResponse(response_data)
+
 
 #사용자 정보 업데이트 : 4번 
 def user_newinfo(request):
