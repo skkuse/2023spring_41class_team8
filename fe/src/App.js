@@ -10,7 +10,6 @@ import CodingProblemList from "./pages/codingProblem/codingProblemList";
 import Selection from "./pages/selection/selection";
 
 export const defaultUserInfo = {
-  id: 0,
   email: "test@gmail.com",
   password: "test",
   solvedCodingProblems: [1, 4, 5],

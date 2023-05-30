@@ -79,7 +79,7 @@ const Register = () => {
       
       //api 보내기
       try {
-        const response = await axios.post('http://127.0.0.1:8000/user', {
+        const response = await axios.post('http://127.0.0.1:8000/register', {
           email: email,
           password: password,
         });
