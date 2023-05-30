@@ -50,17 +50,31 @@ const Register = () => {
     setPassword2(e.target.value);
   };
 
-  const duplicateHandler = (e) => {
-    //중복 확인 성공하면 성공팝업, 아니면 실패 팝업
-    //const isDuplicate = checkDuplicate(); // 중복 확인 로직을 구현한 함수
-    /* if (isDuplicate) {
-      setDuplicateError(true); // 중복된 이메일이 있다면 에러 설정
-    } else {
-      setDuplicateError(false); // 중복된 이메일이 없다면 에러 해제
-      setSuccessPopup(true); // 중복 확인 성공 팝업 설정
-    } */
-    setDuplicatePopup(false); // 중복된 이메일이 없다면 에러 해제
-    setSuccessPopup(true); // 중복 확인 성공 팝업 설정
+  const duplicateHandler = async (e) => {
+    try {
+      const response = await fetch(`http://localhost:8000/user/idcheck?email=${email}`);
+      
+      if (response.ok) {
+        // Login successful, update user info and navigate to the desired page
+        const data = await response.json();
+        setDuplicatePopup(true);
+        if (data.status === 200){
+          setDuplicatePopup(false);
+          setSuccessPopup(true);
+        }
+        else if(data.status===501){
+          setDuplicatePopup(true);
+          setSuccessPopup(false); // 중복된 이메일이 없다면 에러 해제
+           // 중복 확인 성공 팝업 설정
+        }
+      } else {
+        // Login failed, display failure message
+        setFailurePopup(true);
+      }
+    } catch (error) {
+      // Handle any network or server errors
+      console.error('Error:', error);
+    } // 중복 확인 성공 팝업 설정
   };
 
   const handleSubmit = async (e) => {
