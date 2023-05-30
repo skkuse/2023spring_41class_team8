@@ -172,6 +172,33 @@ def userinfo_view(request):
     }
     return JsonResponse(response_data)
 
+
+#유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 수정
+def userinfo_view(request):
+    username = request.GET.get('token')
+    solved_ethics_list = []
+    solved_coding_list = []
+    ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
+    solvedEthics = SolvedEthics.objects.filter(username=username).all() #해결한 윤리 문제를 불러와서 저장
+    for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
+        solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
+        if solved_ethics is not None:
+            solved_ethics_list.append(ethicsProblem.id) #존재시 해결한 문제 번호를 저장
+
+        codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
+    solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
+    for codingproblem in codingsProblems: #전체 문제 리스트 순회
+        solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
+        if solved_coding is not None:
+            solved_coding_list.append(codingproblem.id) #존재시 해결한 문제 번호를 저장
+    
+    response_data = {
+        "solvedCodingProblems" : solved_coding_list,
+        "solvedEthicsProblems" : solved_ethics_list,
+    }
+    return JsonResponse(response_data)
+
+
 #사용자 정보 업데이트 : 4번 
 def user_newinfo(request):
     data = json.loads(request.body)
@@ -225,7 +252,7 @@ def user_newinfo(request):
     return JsonResponse(response_data)
 """
 
-#윤리문제 전체 전송 : 5번 
+#윤리문제 전체 전송 : 3번 
 def ethics_view(request):
     username = request.GET.get('token')
     ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
@@ -256,7 +283,7 @@ def ethics_view(request):
     
     return JsonResponse(response_data)
 
-#윤리문제 선택 시 그것에 대한 피드백 전송 : 6번 
+#윤리문제 선택 시 그것에 대한 피드백 전송 : 4번 
 def ethics_submission(request):
     body = json.loads(request.body)
     username = body.get("token")
@@ -286,7 +313,7 @@ def ethics_submission(request):
 
     
 
-# 코딩문제 전체 전송 : 7번 
+# 코딩문제 전체 전송 : 5번 
 def codings_view(request):
     username = request.GET.get('token')
     codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
@@ -315,7 +342,7 @@ def codings_view(request):
     
     return JsonResponse(response_data)
 
-# 코딩시 GPT답 전송 : 8번 
+# 코딩시 GPT답 전송 : 6번 
 def coding_answer(request):
     username = request.GET.get('token')
     pid = request.GET.get('pid')
@@ -349,7 +376,7 @@ def coding_answer(request):
     }
     return JsonResponse(response_data)
 
-# 유저 답 확인 : 9번 
+# 유저 답 확인 : 7번 
 def useranswer_view(request):
     if request.method == "POST": 
         body = json.loads(request.body)
