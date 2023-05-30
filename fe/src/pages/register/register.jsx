@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import {
   Avatar,
   Button,
@@ -62,7 +63,7 @@ const Register = () => {
     setSuccessPopup(true); // 중복 확인 성공 팝업 설정
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Perform register logic here, e.g., send email and password to an API for authentication
     // password = password2 이면 로그인 아니면 팝업
@@ -73,11 +74,29 @@ const Register = () => {
     if (password === password2 && successPopup === true){
       console.log("Email:", email);
       console.log("Password:", password);
+      //setEmail(email);
       setPassword(password);
-
-      setSuccessPopup(true);
-      ///api 보내기
-      navigate("/");
+      
+      //api 보내기
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/register', {
+          email: email,
+          password: password,
+        });
+  
+        if (response.status === 201) {
+          setSuccessPopup(true);
+          navigate("/");
+        } else {
+          //setFailurePopup(true);
+          setFailure2Popup(true);
+        }
+      } catch (error) {
+        console.log(error);
+        setFailurePopup(true);
+        setFailure2Popup(true);
+      }
+      
     } else if(password !== password2 && successPopup === true){
       setFailurePopup(true);
       setFailure2Popup(false);
@@ -120,6 +139,7 @@ const Register = () => {
                     id="email"
                     name="email"
                     label="이메일 주소"
+                    onChange={handleEmailChange}
                   />
                   <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                     <Button variant="contained" onClick={duplicateHandler}>
