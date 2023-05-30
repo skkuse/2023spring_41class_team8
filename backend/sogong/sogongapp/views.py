@@ -111,15 +111,14 @@ def get_feedback(problem_content, user_submission):
 def register_view(request):
     if request.method == "POST": # 회원가입
         body = json.loads(request.body)
-        id = body.get("id")
-        email = body.get("email")
-        pw = body.get("pw")
-        user = User(username=id, email=email, password=pw) # id, email, password
+        id = body.get("email")
+        pw = body.get("password")
+        print(id, pw)
+        user = User(username=id, password=pw) # id, email, password
         if User.objects.filter(username=id).exists():
             response_data = {
             "message": "이미 존재하는 회원입니다.",
             "id" : id,
-            "email" : email,
             "pw" : pw
         } # 이미 회원 정보가 존재하는 경우
         else:
@@ -127,7 +126,6 @@ def register_view(request):
             response_data = {
             "message": "회원가입이 완료되었습니다.",
             "id" : id,
-            "email" : email,
             "pw" : pw
         } # 새로 만든 경우
     
@@ -135,8 +133,8 @@ def register_view(request):
         return JsonResponse(response_data)
     
     else:
-        id = request.GET.get('id')
-        pw = request.GET.get('pw')
+        id = request.GET.get('email')
+        pw = request.GET.get('password')
         user = User.objects.get(username=id)
         print()
         if user and check_password(user,pw): # db와 비교 

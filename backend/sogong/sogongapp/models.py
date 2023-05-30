@@ -23,7 +23,6 @@ class CodingProblem(models.Model):
 # 사용자 테이블
 class User(models.Model):
     username = models.CharField(max_length=100, unique=True) # 사용자 이름
-    email = models.EmailField() # 사용자 이메일
     password = models.CharField(max_length=128) # 사용자 패스워드
 # (기술적인 문제로 사용자 테이블에서 분리)
 class SolvedCoding(models.Model):
