@@ -16,9 +16,8 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
   const navigate = useNavigate();
   const [data, setData] = useState(codingProblems);
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
-  console.log(userInfo)
-  
-  
+  console.log(userInfo);
+
   const onClickProblem = (data) => {
     navigate(`/coding/${data.pid}`, {
       state: {
@@ -35,7 +34,7 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
       <div className="coding_problem_score">
         <div>
           <div className="coding_problem_score_info">
-            {`${userInfo.email}님의 점수: 30`}
+            {`${userInfo.username}님의 점수: 30`}
           </div>
         </div>
       </div>
@@ -48,8 +47,7 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
             justifyContent: "center",
             border: `1px solid #3c407f`,
             fontSize: "20px",
-            width: "50%",
-            boxShadow: "none",
+            width: "fit-content",
           }}>
           <Table style={{ width: "500px" }}>
             <TableHead>

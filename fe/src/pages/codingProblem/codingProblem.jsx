@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import ProblemInfo from "./components/ProblemInfo";
 import Editer from "./components/Editer";
 import AIAnswer from "./components/AIAnswer";
-import {codingProblems} from "../../codingProblemData";
-import {correctAnswer} from "../../correctAnswer";
+import { codingProblems } from "../../codingProblemData";
+import { correctAnswer } from "../../correctAnswer";
 import AIFeedback from "./components/AIFeedback";
 import { languageOptions } from "../../languageOption";
 import { useLocation } from "react-router-dom";
@@ -25,8 +25,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   const [AIcode, setAICode] = useState(correctAnswer[0].answer);
   const [theme, setTheme] = useState("oceanic-next");
   const [language, setLanguage] = useState(languageOptions[0]);
-  
-  
+
   const [isBlurred, setIsBlurred] = useState(true);
 
   const enterPress = useKeyPress("Enter");
@@ -39,7 +38,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       console.log("ctrlPress", ctrlPress);
     }
   }, [ctrlPress, enterPress]);
-  
+
   // 초기 테마 설정을 수행
   useEffect(() => {
     defineTheme("oceanic-next").then((_) =>
@@ -79,13 +78,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     // 피드백 불러오기
     setAIFeedBack(newFeedback);
   };
-  
 
   return (
     <div className="coding_problem_container">
-      <ProblemInfo 
-        problemData = {data}
-      />
+      <ProblemInfo problemData={data} />
       <div className="coding_problem_content">
         <div className="coding_problem_editor">
           <Editer
@@ -96,7 +92,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
           />
           <button onClick={handleSaveAnswer}>제출</button>
         </div>
-        
+
         <div className="coding_problem_aianswer">
           <AIAnswer
             code={AIcode}
@@ -113,7 +109,6 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
           <AIFeedback userAnswer={userAnswer} updateAIFeedback={Feedback} />
         )}
       </div>
-      
     </div>
   );
 }

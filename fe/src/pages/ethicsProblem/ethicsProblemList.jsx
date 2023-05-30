@@ -16,14 +16,6 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
   const navigate = useNavigate();
   const [data, setData] = useState(ethicsProblems);
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
-  //   const [userInfo, setUserInfo] = useState({
-  //     id: 0,
-  //     email: "",
-  //     password: "",
-  //     username: "test",
-  //     solvedCodingProblems: [],
-  //     solvedEthicsProblems: [0, 3, 5, 10],
-  //   });
 
   const onClickProblem = (data) => {
     navigate(`/ethics/${data.pid}`, {
@@ -67,8 +59,7 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
             justifyContent: "center",
             border: `1px solid #3c407f`,
             fontSize: "20px",
-            width: "50%",
-            boxShadow: "none",
+            width: "fit-content",
           }}>
           <Table style={{ width: "500px" }}>
             <TableHead>

@@ -9,23 +9,14 @@ import CodingProblem from "./pages/codingProblem/codingProblem";
 import CodingProblemList from "./pages/codingProblem/codingProblemList";
 import Selection from "./pages/selection/selection";
 
-export const defaultUserInfo =
-  // {
-  //   id: -1,
-  //   email: "",
-  //   password: "",
-  //   username: "",
-  //   solvedCodingProblems: [],
-  //   solvedEthicsProblems: [],
-  // };
-
-  {
-    id: 0,
-    email: "test@gmail.com",
-    password: "test",
-    solvedCodingProblems: [1, 4, 5],
-    solvedEthicsProblems: [0, 4, 9, 11],
-  };
+export const defaultUserInfo = {
+  id: 0,
+  username: "test",
+  email: "test@gmail.com",
+  password: "test",
+  solvedCodingProblems: [1, 4, 5],
+  solvedEthicsProblems: [0, 4, 9, 11],
+};
 
 function App() {
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
@@ -77,14 +68,13 @@ function App() {
             />
           }
         />
-        <Route path="/register" element={<Register />}/>
-        <Route path="/"
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
           element={
-            <Login
-              getUserInfo={getUserInfo}
-              updateUserInfo={updateUserInfo}
-            />
-          } />
+            <Login getUserInfo={getUserInfo} updateUserInfo={updateUserInfo} />
+          }
+        />
         <Route path="/selection" element={<Selection />} />
         <Route path="/ethicsProblem" element={<EthicsProblem />} />
       </Routes>
