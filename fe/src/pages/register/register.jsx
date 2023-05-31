@@ -28,7 +28,7 @@ const Register = () => {
   const [failurePopup, setFailurePopup] = useState(false);
   const [failure2Popup, setFailure2Popup] = useState(false);
   const [failure3Popup, setFailure3Popup] = useState(false);
-  
+  const [failure4Popup, setFailure4Popup] = useState(false);
 
 
   
@@ -104,16 +104,16 @@ const Register = () => {
         const data = await response.json()
         console.log(data.status)
         if (data.status === 200) {
-          setSuccessPopup(true);
+          // setSuccessPopup(true);
           navigate("/");
         } else {
           //setFailurePopup(true);
-          setFailure2Popup(true);
+          setFailure4Popup(true);
         }
       } catch (error) {
         console.log(error);
-        setFailurePopup(true);
-        setFailure2Popup(true);
+        // setFailurePopup(true);
+        setFailure4Popup(true);
       }
       
     } else if(password !== password2 && successPopup === true){
@@ -201,6 +201,7 @@ const Register = () => {
             제출
           </Button>
         </Box>
+        {failure4Popup && <div style={{ color: 'red' }}>* 내부적인 문제로 회원 정보 등록에 실패했습니다.</div>} {/* 실패 팝업 표시 */}
         {failure3Popup && <div style={{ color: 'red' }}>* 조건에 맞는 비밀번호를 입력해주세요.</div>} {/* 실패 팝업 표시 */}
         {failure2Popup && <div style={{ color: 'red' }}>* 이메일 중복 확인을 한 후 제출 버튼을 눌러주세요.</div>} {/* 실패 팝업 표시 */}
         {failurePopup && <div style={{ color: 'red' }}>* 비밀번호와 비밀번호 확인이 일치하지 않습니다.</div>} {/* 실패 팝업 표시 */}
