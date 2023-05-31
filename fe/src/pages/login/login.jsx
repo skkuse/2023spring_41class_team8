@@ -35,41 +35,25 @@ function Login({ getUserInfo, updateUserInfo }) {
     setPassword(e.target.value);
   };
 
-  const handleSubmit =async (e) => {
-    try {
-      const response = await fetch(`http://localhost:8000/user?email=${email}&password=${password}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === 200){
-        }
-        else if(data.status===501){
-        }
-      } else {
-      }
-    } catch (error) {
-      // Handle any network or server errors
-      console.error('Error:', error);
-    } // 중복 확인 성공 팝업 설정
-  };
-  //  (e) => {
-  //   e.preventDefault();
-  //   // Perform login logic here, e.g., send email and password to an API for authentication
-  //   console.log("Email:", email);
-  //   console.log("Password:", password);
-  //   ///// 정보가 있다면
-  //   updateUserInfo({
-  //     id: 0,
-  //     email: email,
-  //     password: password,
-  //     solvedCodingProblems: [1, 4, 5],
-  //     solvedEthicsProblems: [0, 4, 9, 11],
-  //   });
-  //   navigate("/selection");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Perform login logic here, e.g., send email and password to an API for authentication
+    console.log("Email:", email);
+    console.log("Password:", password);
+    ///// 정보가 있다면
+    updateUserInfo({
+      id: 0,
+      username: "test",
+      email: email,
+      password: password,
+      solvedCodingProblems: [1, 4, 5],
+      solvedEthicsProblems: [0, 4, 9, 11],
+    });
+    navigate("/selection");
 
-  //   ///없다면
-  //   setFailurePopup(true);
-  // };
+    ///없다면
+    setFailurePopup(true);
+  };
 
   return (
     <ThemeProvider theme={theme}>
