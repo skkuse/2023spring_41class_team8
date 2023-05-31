@@ -313,6 +313,8 @@ def ethics_submission(request):
         response_data = {
             "results":results,
         }
+        solvedEthics = SolvedEthics(user = username, problem = ethicsproblem.title)
+        solvedEthics.save()
     #피드백 보내기
         return JsonResponse(response_data)
     
@@ -410,6 +412,8 @@ def useranswer_view(request):
                         "result" : "pass",
                         "feedback" : gpt_feedback,
                     }
+                    solvedCoding = SolvedCoding(user = username, problem = problem_title)
+                    solvedCoding.save()
                 else:
                     gpt_feedback = get_feedback(problem_content, user_submission)
                     response_data = {
@@ -422,6 +426,8 @@ def useranswer_view(request):
                     "result" : "pass",
                     "feedback" : gpt_feedback,
                 }
+                solvedCoding = SolvedCoding(user = username, problem = problem_title)
+                solvedCoding.save()
             else:
                 response_data = {
                     "result" : "fail",
