@@ -12,7 +12,7 @@ dtype={
     "content_problem": "CharField", 
     "content_input":"CharField",
     "content_output" :"CharField",
-    "answer": "CharField"
+    "gpt_answer": "CharField"
     }
 
 dtype2={
