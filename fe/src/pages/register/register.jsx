@@ -58,7 +58,7 @@ const Register = () => {
         // Login successful, update user info and navigate to the desired page
         const data = await response.json();
         setDuplicatePopup(true);
-        // status 값 200이면 가능 501이면 중복
+        // status 값 200이면 가능 501이면 중복 
         if (data.status === 200){
           setDuplicatePopup(false);
           setSuccessPopup(true);
@@ -93,12 +93,17 @@ const Register = () => {
       
       //api 보내기
       try {
-        const response = await axios.post('http://127.0.0.1:8000/register', {
+        const user = {
           email: email,
-          password: password,
+          password: password
+        }
+        const response = await fetch('http://127.0.0.1:8000/register', {
+          method:'POST',
+          body: JSON.stringify(user)
         });
-  
-        if (response.status === 201) {
+        const data = await response.json()
+        console.log(data.status)
+        if (data.status === 200) {
           setSuccessPopup(true);
           navigate("/");
         } else {

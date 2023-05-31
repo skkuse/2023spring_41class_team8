@@ -5,11 +5,8 @@ from .models import EthicsProblem
 from .models import CodingProblem
 from .models import SolvedEthics
 from .models import SolvedCoding
-from .models import CodingSubmission
 from .models import CodingTestCase
-from .models import EthicsSubmission
 import json
-import hashlib
 import openai
 
 import sogongapp.gpt_prompts as gpt_prompts
@@ -153,7 +150,9 @@ def login_view(request):
             "solvedCodingProblems" : solvedCodingProblems,
             "solvedEthicsProblems" : solvedEthicsProblems,
         }
+    return JsonResponse(response_data)
 
+# email 중복검사 : 1.1번
 def user_idcheck(request):
     if request.method == "GET":
         id = request.GET.get('email')
@@ -166,8 +165,26 @@ def user_idcheck(request):
             response_data = {
                 "status": 200
             }
-        print(response_data)
         return JsonResponse(response_data)
+    
+def register_view(request):
+    if request.method =="POST":
+        body = json.loads(request.body)
+        id = body.get('email')
+        pw = body.get('password')
+        try:
+            user = User.objects.get(username=id)
+            response_data={
+                'status':501
+            }
+            return JsonResponse(response_data)
+        except User.DoesNotExist:
+            response_data ={
+                'status':200
+            }
+            user = User(username=id, password = pw)
+            user.save()
+            return JsonResponse(response_data)
 """
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
@@ -263,7 +280,7 @@ def user_newinfo(request):
        #전체 업데이트된 코딩문제 풀었는지 여부 전송
 
     return JsonResponse(response_data)
-
+"""
 
 #윤리문제 전체 전송 : 3번 
 def ethics_view(request):
@@ -299,131 +316,144 @@ def ethics_view(request):
 #윤리문제 선택 시 그것에 대한 피드백 전송 : 4번 
 def ethics_submission(request):
     body = json.loads(request.body)
-    username = body.get("token")
     pid = body.get("pid")
-    option = body.get("option") # 입력 데이터 받기 
-
-
-    ethicssubmission = EthicsSubmission.objects.get_or_create(user=username,problem=pid)
-    ethicssubmission.user_submission = option
-    ethicssubmission.save()#유저의 답변값 EthicsSubmission DB저장
+    username = body.get("email")
     
-    ethicsproblem = EthicsProblem.objects.get(title = pid)
-    optionA = ethicsproblem.optionA
-    optionB = ethicsproblem.optionB
-    submissionA = ethicsproblem.submissionA
-    submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
+    if username is not None: #토큰값 있는 경우
+        ethicsproblem = EthicsProblem.objects.get(id = pid)
+        submissionA = ethicsproblem.submissionA
+        submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
+        
+        results = []
+        results.append(submissionA)
+        results.append(submissionB)
 
-    response_data = {
-        "optionA": optionA,
-        "optionB": optionB,
-        "submissionA": submissionA,
-        "submissionB": submissionB,
-    }
+        response_data = {
+            "results":results,
+        }
     #피드백 보내기
-    return JsonResponse(response_data)
+        return JsonResponse(response_data)
+    
+    else: # 토큰값 없는 경우
+        results =[]
+        response_data = {
+            "results":results,
+        }
+
+        return JsonResponse(response_data)
 
 
     
 
 # 코딩문제 전체 전송 : 5번 
 def codings_view(request):
-    username = request.GET.get('token')
+    username = request.GET.get('email')
     codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
-    solvedCodings = SolvedCoding.objects.filter(username=username).all() #해결한 코딩 문제를 불러와서 저장
-    response_data = []
-    for codingproblem in codingsProblems: #전체 문제 리스트 순회
-        solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
-        if solved_coding is not None:
-            response_data.append({
-                "title": codingproblem.title,
-                "level": codingproblem.level,
-                "content": codingproblem.content_problem,
-                "input": codingproblem.content_input,
-                "output": codingproblem.content_output,
-                "solved": True,
-            }) #존재시 해결한 문제임을 전송
-        else:
-            response_data.append({
-                "title": codingproblem.title,
-                "level": codingproblem.level,
-                "content": codingproblem.content_problem,
-                "input": codingproblem.content_input,
-                "output": codingproblem.content_output,
-                "solved": False,
-            }) #부재시 해결한 적 없는 문제임을 전송
+
+    if username is not None:
+        codingproblem = []
+
+        for problem in codingsProblems:
+            codingproblem.append({
+                "pid": problem.id,
+                "title": problem.title,
+                "level": problem.level,
+                "content": problem.content_problem,
+                "input": problem.content_input,
+                "output": problem.content_output,
+            })
+    else:
+        codingproblem =[]
     
-    return JsonResponse(response_data)
-
-# 코딩시 GPT답 전송 : 6번 
-def coding_answer(request):
-    username = request.GET.get('token')
-    pid = request.GET.get('pid')
-    problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
-    problem_title = problem_info.title
-    problem_text = problem_info.content_problem
-    problem_input = problem_info.content_input
-    problem_output = problem_info.content_output
-    gpt_answer = ''  #gpt 답안을 받을 변수 선언
-
-    #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
-    try:  
-        codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
-        gpt_answer = codingSubmission.gpt_answer
-    #해결한 적 없는 경우 GPT에게 요청
-    except CodingSubmission.DoesNotExist:
-        gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
-        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
-
-        # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
-        while answer_validation(gpt_answer, testcases) is False:
-            print("GPT 답변에 문제가 있습니다.")
-            gpt_answer = problem_info.answer
-
-        codingSubmission = CodingSubmission(user=username, problem=problem_title, gpt_answer=gpt_answer, user_submission=None, gpt_feedback=None)
-        codingSubmission.save() # 정상적 생성 이후 codingSubmission에 저장
-
     response_data = {
-        "message" : "GPT의 답변입니다",
-        "answer" : gpt_answer,
+        "codingproblem":codingproblem
     }
+
     return JsonResponse(response_data)
 
+# 코딩시 GPT답 전송 : 8번 
+def coding_answer(request):
+    pid = request.GET.get('pid')
+    username = request.GET.get('email')
+    if username is not None:
+        problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
+        problem_title = problem_info.title
+        problem_text = problem_info.content_problem
+        problem_input = problem_info.content_input
+        problem_output = problem_info.content_output
+        gpt_answer = ''  #gpt 답안을 받을 변수 선언
+
+        #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
+        if problem_info.gpt_answer is not None:
+            gpt_answer = problem_info.gpt_answer
+        #해결한 적 없는 경우 GPT에게 요청
+        else:
+            gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
+            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+
+            # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
+            while answer_validation(gpt_answer, testcases) is False:
+                print("GPT 답변에 문제가 있습니다.")
+                gpt_answer = problem_info.answer
+
+        response_data = {
+            "answer" : gpt_answer,
+        }
+        return JsonResponse(response_data)
+    else:
+        response_data = {
+            "answer" : "",
+        }
+        return JsonResponse(response_data)
 # 유저 답 확인 : 7번 
 def useranswer_view(request):
     if request.method == "POST": 
         body = json.loads(request.body)
-        username = body.get("token")
+        username = body.get("email")
         pid = body.get("pid")
         user_submission = body.get("answer")
-        problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
-        problem_title = problem_info.title
-        problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
+        is_timeout  = body.get("isTimeout")
+        if username is not None:
+            problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
+            problem_title = problem_info.title
+            problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
 
-        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
-    
-        #사용자의 답변이 정확한지 확인
-        if answer_validation(user_submission, testcases):
-            gpt_feedback = get_feedback(problem_content, user_submission)
-            codingSubmission = CodingSubmission.objects.get(user=username, problem=problem_title)
-            codingSubmission.user_submission = user_submission
-            codingSubmission.gpt_feedback = gpt_feedback
-            codingSubmission.save() #답변이 정답일 시 사용자의 답변과 피드백을 저장
-
-            response_data = {
-                "message": "정답입니다!",
-                "isPass" : True,
-                "feedback" : gpt_feedback,
-            }
+            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+        
+            #사용자의 답변이 정확한지 확인
+            if is_timeout:
+                if answer_validation(user_submission, testcases):
+                    gpt_feedback = get_feedback(problem_content, user_submission)
+                    response_data = {
+                        "result" : "pass",
+                        "feedback" : gpt_feedback,
+                    }
+                else:
+                    gpt_feedback = get_feedback(problem_content, user_submission)
+                    response_data = {
+                        "result" : "fail",
+                        "feedback" : gpt_feedback,
+                    }
+            elif answer_validation(user_submission, testcases):
+                gpt_feedback = get_feedback(problem_content, user_submission)
+                response_data = {
+                    "result" : "pass",
+                    "feedback" : gpt_feedback,
+                }
+            else:
+                response_data = {
+                    "result" : "fail",
+                    "feedback" : "",
+                }  #
+            return JsonResponse(response_data)
         else:
             response_data = {
-                "message": "틀렸습니다!",
-                "isPass" : False,
-                "feedback" : None,
-            }  #정답이 아닐 시 저장하지 않음
-        return JsonResponse(response_data)
+                "result" : "",
+                "feedback" : "",
+            }  #
+            return JsonResponse(response_data)
     
-
+"""
 codingProblem = CodingProblem.objects.all()
 codingProblem_count = CodingProblem.objects.all().count()
 print(codingProblem_count)
