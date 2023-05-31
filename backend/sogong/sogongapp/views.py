@@ -323,9 +323,10 @@ def ethics_submission(request):
     body = json.loads(request.body)
     pid = body.get("pid")
     username = body.get("email")
-    
+
     if username is not None: #토큰값 있는 경우
         ethicsproblem = EthicsProblem.objects.get(id = pid)
+        user = User.objects.get(username=username) 
         submissionA = ethicsproblem.submissionA
         submissionB = ethicsproblem.submissionB # 각각의 선택에 대한 결과
         
@@ -335,10 +336,9 @@ def ethics_submission(request):
 
         response_data = {
             "results":results,
-        }
-        username = User.objects.get(username=username)
-        ethicproblem = EthicsProblem.objects.get(id = pid).title
-        solvedEthics = SolvedEthics(user = username, problem = ethicproblem)
+        }  
+        print(results)
+        solvedEthics = SolvedEthics(user = user, problem = ethicsproblem)
         solvedEthics.save()
     #피드백 보내기
         return JsonResponse(response_data)
@@ -419,6 +419,7 @@ def useranswer_view(request):
     if request.method == "POST": 
         body = json.loads(request.body)
         username = body.get("email")
+        user = User.objects.get(username=username) 
         pid = body.get("pid")
         user_submission = body.get("answer")
         is_timeout  = body.get("isTimeout")
@@ -426,7 +427,6 @@ def useranswer_view(request):
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
             problem_title = problem_info.title
             problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
-
             testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
         
             #사용자의 답변이 정확한지 확인
@@ -437,7 +437,7 @@ def useranswer_view(request):
                         "result" : "pass",
                         "feedback" : gpt_feedback,
                     }
-                    solvedCoding = SolvedCoding(user = username, problem = problem_title)
+                    solvedCoding = SolvedCoding(user = user, problem = problem_info)
                     solvedCoding.save()
                 else:
                     gpt_feedback = get_feedback(problem_content, user_submission)
@@ -451,7 +451,7 @@ def useranswer_view(request):
                     "result" : "pass",
                     "feedback" : gpt_feedback,
                 }
-                solvedCoding = SolvedCoding(user = username, problem = problem_title)
+                solvedCoding = SolvedCoding(user = user, problem = problem_info)
                 solvedCoding.save()
             else:
                 response_data = {
