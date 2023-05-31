@@ -168,7 +168,7 @@ def user_idcheck(request):
             }
         print(response_data)
         return JsonResponse(response_data)
-
+"""
 #유저가 얼마나 문제 풀었나 확인하는 함수 : 3번 
 def userinfo_view(request):
     username = request.GET.get('token')
@@ -423,7 +423,7 @@ def useranswer_view(request):
             }  #정답이 아닐 시 저장하지 않음
         return JsonResponse(response_data)
     
-"""
+
 codingProblem = CodingProblem.objects.all()
 codingProblem_count = CodingProblem.objects.all().count()
 print(codingProblem_count)
