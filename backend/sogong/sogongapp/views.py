@@ -336,7 +336,9 @@ def ethics_submission(request):
         response_data = {
             "results":results,
         }
-        solvedEthics = SolvedEthics(user = username, problem = ethicsproblem.title)
+        username = User.objects.get(username=username)
+        ethicproblem = EthicsProblem.objects.get(id = pid).title
+        solvedEthics = SolvedEthics(user = username, problem = ethicproblem)
         solvedEthics.save()
     #피드백 보내기
         return JsonResponse(response_data)
