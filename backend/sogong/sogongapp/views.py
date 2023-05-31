@@ -438,7 +438,7 @@ def useranswer_view(request):
                         "result" : "pass",
                         "feedback" : gpt_feedback,
                     }
-                    solvedCoding = SolvedCoding(user = user, problem = problem_title)
+                    solvedCoding = SolvedCoding(user = user, problem = problem_info)
                     solvedCoding.save()
                 else:
                     gpt_feedback = get_feedback(problem_content, user_submission)
