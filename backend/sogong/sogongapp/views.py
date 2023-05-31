@@ -111,47 +111,51 @@ def login_view(request):
     email = request.GET.get('email')
     password = request.GET.get('password')
     
-    user = User.objects.get(username=email)
-    print(email, password)
-    if user and check_password(user,password): # db와 비교 
-        # 로그인 성공      
-        solvedEthicsProblems = []
-        solvedCodingProblems = []
-        get_scored = 0        
-        total_score = 0
-        percentage_score = 0
-        ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
-        solvedEthics = SolvedEthics.objects.filter(user=email).all() #해결한 윤리 문제를 불러와서 저장
-        for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
-            solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
-            if solved_ethics is not None:
-                solvedEthicsProblems.append(ethicsProblem.id)
+    try:
+        user = User.objects.get(username=email)
+        print(email, password)
+        if user and check_password(user,password): # db와 비교 
+            # 로그인 성공      
+            solvedEthicsProblems = []
+            solvedCodingProblems = []
+            get_scored = 0        
+            total_score = 0
+            percentage_score = 0
+            ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
+            solvedEthics = SolvedEthics.objects.filter(user=email).all() #해결한 윤리 문제를 불러와서 저장
+            for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
+                solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
+                if solved_ethics is not None:
+                    solvedEthicsProblems.append(ethicsProblem.id)
 
-        codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
-        solvedCodings = SolvedCoding.objects.filter(user=email).all() #해결한 코딩 문제를 불러와서 저장
-        for codingproblem in codingsProblems: #전체 문제 리스트 순회
-            total_score += int(codingproblem.level)
-            solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
-            if solved_coding is not None:
-                get_scored += int(codingproblem.level)
-                solvedCodingProblems.append(codingproblem.id)
+            codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
+            solvedCodings = SolvedCoding.objects.filter(user=email).all() #해결한 코딩 문제를 불러와서 저장
+            for codingproblem in codingsProblems: #전체 문제 리스트 순회
+                total_score += int(codingproblem.level)
+                solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
+                if solved_coding is not None:
+                    get_scored += int(codingproblem.level)
+                    solvedCodingProblems.append(codingproblem.id)
 
-        percentage_score = get_scored / total_score * 100
-        
-        response_data = {
-            "email" : email,
-            "score" : percentage_score,
-            "solvedCodingProblems" : solvedCodingProblems,
-            "solvedEthicsProblems" : solvedEthicsProblems,
-        }
-    else:
-        response_data = {
-            "email" : None,
-            "score" : 0,
-            "solvedCodingProblems" : solvedCodingProblems,
-            "solvedEthicsProblems" : solvedEthicsProblems,
-        }
-    return JsonResponse(response_data)
+            percentage_score = get_scored / total_score * 100
+            
+            response_data = {
+                "email" : email,
+                "score" : percentage_score,
+                "solvedCodingProblems" : solvedCodingProblems,
+                "solvedEthicsProblems" : solvedEthicsProblems,
+            }
+        else:
+            response_data = {
+                "email" : '',
+                "score" : 0,
+                "solvedCodingProblems" : solvedCodingProblems,
+                "solvedEthicsProblems" : solvedEthicsProblems,
+            }
+        return JsonResponse(response_data)
+    except:
+        response_data={}
+        return JsonResponse(response_data, status=501)
 
 # email 중복검사 : 1.1번
 def user_idcheck(request):
