@@ -53,7 +53,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     }, 1000);
 
     // 도달하면 handleSaveAnswer 실행 및 타이머 정리
-    if (timer === data.level*20) {
+    if (timer === data.level * 20) {
       handleSaveAnswer();
       clearInterval(interval);
     }
@@ -81,10 +81,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     setIsSubmitted(true);
     updateUserAnswer(code);
     let userInfo = getUserInfo();
-      updateUserInfo({
-        ...userInfo,
-        solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
-      });
+    updateUserInfo({
+      ...userInfo,
+      solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
+    });
   };
   // 코드 숨기기/보이기 기능을 처리하는 함수
   const handleBlur = () => {
