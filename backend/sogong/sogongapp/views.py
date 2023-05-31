@@ -121,14 +121,14 @@ def login_view(request):
         total_score = 0
         percentage_score = 0
         ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
-        solvedEthics = SolvedEthics.objects.filter(username=email).all() #해결한 윤리 문제를 불러와서 저장
+        solvedEthics = SolvedEthics.objects.filter(user=email).all() #해결한 윤리 문제를 불러와서 저장
         for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
             solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
             if solved_ethics is not None:
                 solvedEthicsProblems.append(ethicsProblem.id)
 
         codingsProblems = CodingProblem.objects.all() #전체 코딩 문제를 불러와서 저장
-        solvedCodings = SolvedCoding.objects.filter(username=email).all() #해결한 코딩 문제를 불러와서 저장
+        solvedCodings = SolvedCoding.objects.filter(user=email).all() #해결한 코딩 문제를 불러와서 저장
         for codingproblem in codingsProblems: #전체 문제 리스트 순회
             total_score += int(codingproblem.level)
             solved_coding = solvedCodings.filter(problem=codingproblem.title).first() #지금 선택한 문제 제목이 solvedCodings에 존재하는 지 확인
