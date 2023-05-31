@@ -4,10 +4,12 @@ export const ethicsAPI = {
   getProblems: (email) => {},
   submit: async (pid, email) => {
     try {
-      return await axios.post("http://127.0.0.1:8000/ethics/submission", {
+      const response = await axios.post("http://127.0.0.1:8000/ethics/submission", {
         pid,
         email,
       });
+      console.log(response.data); // 추가된 코드
+      return response;
     } catch (e) {
       console.log(e);
     }
