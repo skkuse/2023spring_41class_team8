@@ -289,33 +289,24 @@ def user_newinfo(request):
 
 #윤리문제 전체 전송 : 3번 
 def ethics_view(request):
-    username = request.GET.get('token')
+    username = request.GET.get('email')
     ethicsProblems = EthicsProblem.objects.all() #전체 윤리 문제를 불러와서 저장
-    solvedEthics = SolvedEthics.objects.filter(username=username).all() #해결한 윤리 문제를 불러와서 저장
-    response_data = []
-    for ethicsProblem in ethicsProblems: #전체 문제 리스트 순회
-        solved_ethics = solvedEthics.filter(problem=ethicsProblem.title).first() #지금 선택한 문제 제목이 solvedEthics에 존재 하는지 확인
-        if solved_ethics is not None:
-            response_data.append({
-                "title": ethicsProblem.title,
-                "content": ethicsProblem.content,
-                "optionA": ethicsProblem.optionA,
-                "optionB": ethicsProblem.optionB,
-                "submissionA": ethicsProblem.submissionA,
-                "submissionB": ethicsProblem.submissionB,
-                "solved": True,
-            }) #존재시 해결한 문제임을 전송
-        else:
-            response_data.append({
-                "title": ethicsProblem.title,
-                "content": ethicsProblem.content,
-                "optionA": ethicsProblem.optionA,
-                "optionB": ethicsProblem.optionB,
-                "submissionA": ethicsProblem.submissionA,
-                "submissionB": ethicsProblem.submissionB,
-                "solved": False,
-            }) #부재시 해결한 적 없는 문제임을 전송
+    ethicsProblem = []
+    if username is not None:
+        for problem in ethicsProblems:
+            ethicsProblem.append({
+                "pid": problem.id,
+                "title": problem.title,
+                "level": problem.level,
+                "content": problem.content_problem,
+                "input": problem.content_input,
+                "output": problem.content_output,
+            })
     
+    response_data = {
+        "ethicsProblem":ethicsProblem
+    }
+
     return JsonResponse(response_data)
 
 #윤리문제 선택 시 그것에 대한 피드백 전송 : 4번 

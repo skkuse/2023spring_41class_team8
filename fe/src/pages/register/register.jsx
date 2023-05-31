@@ -90,31 +90,37 @@ const Register = () => {
       console.log("Password:", password);
       //setEmail(email);
       setPassword(password);
-      
-      //api 보내기
-      try {
-        const user = {
-          email: email,
-          password: password
-        }
-        const response = await fetch('http://127.0.0.1:8000/register', {
-          method:'POST',
-          body: JSON.stringify(user)
-        });
-        const data = await response.json()
-        console.log(data.status)
-        if (data.status === 200) {
-          // setSuccessPopup(true);
-          navigate("/");
-        } else {
-          //setFailurePopup(true);
+      if (failure3Popup){
+          
+      }
+      else{
+        try {
+        
+          const user = {
+            email: email,
+            password: password
+          }
+          const response = await fetch('http://127.0.0.1:8000/register', {
+            method:'POST',
+            body: JSON.stringify(user)
+          });
+          const data = await response.json()
+          console.log(data.status)
+          if (data.status === 200) {
+            // setSuccessPopup(true);
+            navigate("/");
+          } else {
+            //setFailurePopup(true);
+            setFailure4Popup(true);
+          }
+        } catch (error) {
+          console.log(error);
+          // setFailurePopup(true);
           setFailure4Popup(true);
         }
-      } catch (error) {
-        console.log(error);
-        // setFailurePopup(true);
-        setFailure4Popup(true);
       }
+      //api 보내기
+
       
     } else if(password !== password2 && successPopup === true){
       setFailurePopup(true);
