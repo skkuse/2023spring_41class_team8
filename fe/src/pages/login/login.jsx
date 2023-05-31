@@ -35,23 +35,32 @@ function Login({ getUserInfo, updateUserInfo }) {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Perform login logic here, e.g., send email and password to an API for authentication
-    console.log("Email:", email);
-    console.log("Password:", password);
-    ///// 정보가 있다면
-    updateUserInfo({
-      id: 0,
-      email: email,
-      password: password,
-      solvedCodingProblems: [1, 4, 5],
-      solvedEthicsProblems: [0, 4, 9, 11],
-    });
-    navigate("/selection");
+  const handleSubmit =async (e) => {
+    try {
+      const response = await fetch(`http://localhost:8000/user?email=${email}&password=${password}`);
+      
 
-    ///없다면
-    setFailurePopup(true);
+      if (response.ok) {
+        const data = await response.json();
+        if (email === data.email){
+          updateUserInfo({
+            email: email,
+            score: data.score,
+            solvedCodingProblems: data.solvedCodingProblems,
+            solvedEthicsProblems: data.solvedEthicsProblems,
+          });
+          navigate('/selection')
+        }
+        else{
+          setFailurePopup(true);
+        }
+      } else {
+        setFailurePopup(true);
+      }
+    } catch (error) {
+      // Handle any network or server errors
+      console.error('Error:', error);
+    } // 중복 확인 성공 팝업 설정
   };
 
   return (

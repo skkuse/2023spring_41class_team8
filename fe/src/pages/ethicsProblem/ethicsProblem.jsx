@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./ethicsProblem.css";
+import { ethicsAPI } from "../../apis/ethicsAPI";
 
 function EthicsProblem({ getUserInfo, updateUserInfo }) {
   const location = useLocation();
@@ -17,6 +18,7 @@ function EthicsProblem({ getUserInfo, updateUserInfo }) {
         ...userInfo,
         solvedEthicsProblems: [...userInfo.solvedEthicsProblems, data.pid],
       });
+      ethicsAPI.submit(data.pid.toString(), "alltun100@naver.com");
     }
 
     // TODO: 해당 선택지 선택 시 결과 불러오기
