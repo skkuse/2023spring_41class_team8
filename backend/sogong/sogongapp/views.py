@@ -427,7 +427,6 @@ def useranswer_view(request):
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
             problem_title = problem_info.title
             problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
-
             testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
         
             #사용자의 답변이 정확한지 확인
@@ -452,7 +451,7 @@ def useranswer_view(request):
                     "result" : "pass",
                     "feedback" : gpt_feedback,
                 }
-                solvedCoding = SolvedCoding(user = user, problem = problem_title)
+                solvedCoding = SolvedCoding(user = user, problem = problem_info)
                 solvedCoding.save()
             else:
                 response_data = {
