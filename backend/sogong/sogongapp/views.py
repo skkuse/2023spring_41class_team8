@@ -297,10 +297,10 @@ def ethics_view(request):
             ethicsProblem.append({
                 "pid": problem.id,
                 "title": problem.title,
-                "level": problem.level,
-                "content": problem.content_problem,
-                "input": problem.content_input,
-                "output": problem.content_output,
+                "optionA": problem.optionA,
+                "optionB": problem.optionB,
+                "submissionA": problem.submissionA,
+                "submissionB": problem.submissionB
             })
     
     response_data = {
