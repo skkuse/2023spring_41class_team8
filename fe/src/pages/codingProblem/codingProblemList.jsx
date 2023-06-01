@@ -34,7 +34,7 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
       <div className="coding_problem_score">
         <div>
           <div className="coding_problem_score_info">
-            {`${userInfo.username}님의 점수: 30`}
+            {`${userInfo.email}님의 점수: 30`}
           </div>
         </div>
       </div>
