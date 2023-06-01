@@ -41,7 +41,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
     elif method == 'getanswer':
         prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
         messages.append({'role':'user', 'content':problem_content+prompt})
-
+    print(messages)
     wait = 1
     while True:
         try:
