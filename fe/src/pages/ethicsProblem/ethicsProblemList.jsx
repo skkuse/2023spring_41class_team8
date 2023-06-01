@@ -33,7 +33,7 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
       <div className="ethics_problem_percent">
         <div>
           <div className="ethics_problem_percent_info">
-            {`${userInfo.username}님의 진행률: ${Math.round(
+            {`${userInfo.email}님의 진행률: ${Math.round(
               (userInfo.solvedEthicsProblems.length / data.length) * 100
             )}%`}
           </div>
