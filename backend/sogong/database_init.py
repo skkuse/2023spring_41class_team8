@@ -39,7 +39,7 @@ conn.execute("DROP TABLE IF EXISTS sogongapp_CodingTestcase")
 conn.execute("DROP TABLE IF EXISTS sogongapp_ethicsproblem")
 # database에 기존에 준비한 dataset 넣기
 df.to_sql(name='sogongapp_CodingProblem', con = conn, if_exists='replace', dtype=dtype, index = True, index_label='id')
-df2.to_sql(name="sogongapp_CodingTestcase", con = conn, if_exists='replace', dtype=dtype2, index=False)
+df2.to_sql(name="sogongapp_CodingTestcase", con = conn, if_exists='replace', dtype=dtype2, index=True, index_label ='id')
 df3.to_sql(name='sogongapp_ethicsproblem', con = conn, if_exists='replace', dtype=dtype3, index = True, index_label='id')
 conn.commit()
 conn.close()
