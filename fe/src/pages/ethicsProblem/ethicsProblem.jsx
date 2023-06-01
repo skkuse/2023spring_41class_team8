@@ -18,7 +18,10 @@ function EthicsProblem({ getUserInfo, updateUserInfo }) {
         ...userInfo,
         solvedEthicsProblems: [...userInfo.solvedEthicsProblems, data.pid],
       });
-      ethicsAPI.submit(data.pid.toString(), "alltun100@naver.com");
+      ethicsAPI.submit(data.pid.toString(), userInfo.email).then((res) => {
+        console.log("submit", res.data.results);
+        setResult(res.data.results);
+      });
     }
 
     // TODO: 해당 선택지 선택 시 결과 불러오기
@@ -65,14 +68,14 @@ function EthicsProblem({ getUserInfo, updateUserInfo }) {
               selectedOption === "a" ? "ethics_result_option_selected" : ""
             }`}>
             <h3 className="ethics_result_title">A 선택 시 결과</h3>
-            <div className="ethics_result_content">결과 내용</div>
+            <div className="ethics_result_content">{result[0]}</div>
           </div>
           <div
             className={`ethics_result_option ${
               selectedOption === "b" ? "ethics_result_option_selected" : ""
             }`}>
             <h3 className="ethics_result_title">B 선택 시 결과</h3>
-            <div className="ethics_result_content">결과 내용</div>
+            <div className="ethics_result_content">{result[1]}</div>
           </div>
         </div>
       )}

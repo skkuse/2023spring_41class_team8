@@ -10,6 +10,7 @@ import { useLocation } from "react-router-dom";
 import { defineTheme } from "./components/editerStyle/defineTheme";
 import useKeyPress from "./components/editerStyle/useKeyPress";
 import "./codingProblem.css";
+import { codingAPI } from "../../apis/codingAPI";
 
 const pythonDefault = `여기에 입력하세요`;
 
@@ -84,6 +85,9 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     updateUserInfo({
       ...userInfo,
       solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
+    });
+    codingAPI.submit(data.pid, code, userInfo.email, true).then((res) => {
+      console.log("submit", res.data);
     });
   };
   // 코드 숨기기/보이기 기능을 처리하는 함수

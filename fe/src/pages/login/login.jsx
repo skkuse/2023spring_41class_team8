@@ -35,23 +35,24 @@ function Login({ getUserInfo, updateUserInfo }) {
     setPassword(e.target.value);
   };
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     try {
-      const response = await fetch(`http://localhost:8000/user?email=${email}&password=${password}`);
-      
+      const response = await fetch(
+        `http://localhost:8000/user?email=${email}&password=${password}`
+      );
 
       if (response.ok) {
         const data = await response.json();
-        if (email === data.email){
+        if (email === data.email) {
           updateUserInfo({
             email: email,
+            password: password,
             score: data.score,
             solvedCodingProblems: data.solvedCodingProblems,
             solvedEthicsProblems: data.solvedEthicsProblems,
           });
-          navigate('/selection')
-        }
-        else{
+          navigate("/selection");
+        } else {
           setFailurePopup(true);
         }
       } else {
@@ -59,7 +60,7 @@ function Login({ getUserInfo, updateUserInfo }) {
       }
     } catch (error) {
       // Handle any network or server errors
-      console.error('Error:', error);
+      console.error("Error:", error);
     } // 중복 확인 성공 팝업 설정
   };
 

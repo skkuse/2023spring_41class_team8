@@ -11,6 +11,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { ethicsAPI } from "../../apis/ethicsAPI";
+import { userAPI } from "../../apis/userAPI";
 
 function EthicsProblemList({ getUserInfo, updateUserInfo }) {
   const navigate = useNavigate();
@@ -26,7 +28,21 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
   };
 
   useEffect(() => {
-    setUserInfo(getUserInfo());
+    let tempUserInfo = getUserInfo();
+    userAPI
+      .getUserInfo(tempUserInfo.email, tempUserInfo.password)
+      .then((res) => {
+        setUserInfo({
+          ...res.data,
+          password: tempUserInfo.password,
+        });
+        console.log("userinfo", res.data);
+      });
+    ethicsAPI.getProblems(tempUserInfo.email).then((res) => {
+      console.log("ethics data", res.data.ethicsProblem);
+      setData(res.data.ethicsProblem);
+    });
+    // setUserInfo(getUserInfo());
   }, []);
   return (
     <div className="ethics_problem_list_container">
