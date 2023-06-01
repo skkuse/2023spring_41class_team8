@@ -417,9 +417,8 @@ def useranswer_view(request):
         is_timeout  = body.get("isTimeout")
         if username is not None:
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
-            problem_title = problem_info.title
             problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
-            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+            testcases = CodingTestCase.objects.get(problem = problem_info) #해당 문제의 테스트 케이스를 가져옴
         
             #사용자의 답변이 정확한지 확인
             if is_timeout:
