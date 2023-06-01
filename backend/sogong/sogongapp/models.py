@@ -36,7 +36,7 @@ class SolvedEthics(models.Model):
    
 # 문제에 대한 테스트 케이스
 class CodingTestCase(models.Model):
-    problem = models.ForeignKey(CodingProblem, to_field='title', on_delete=models.CASCADE) # 문제 제목
+    problem = models.CharField(max_length=100, unique=True) # 문제 제목
     case_input1 = models.CharField(max_length=100) # 테스트 케이스 Input
     case_input2 = models.CharField(max_length=100)
     case_input3 = models.CharField(max_length=100)
