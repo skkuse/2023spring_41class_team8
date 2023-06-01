@@ -390,7 +390,7 @@ def coding_answer(request):
         #해결한 적 없는 경우 GPT에게 요청
         else:
             gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
-            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+            testcases = CodingTestCase.objects.get(problem = problem_info) #해당 문제의 테스트 케이스를 가져옴
 
             # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
             while answer_validation(gpt_answer, testcases) is False:
