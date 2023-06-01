@@ -1,14 +1,14 @@
 import axios from "axios";
 
 export const codingAPI = {
-  getProblems: (email) => {},
+  getProblems: async (email) => {
+    try {
+      return await axios.get(`http://127.0.0.1:8000/codings?email=${email}`);
+    } catch (e) {
+      console.log(e);
+    }
+  },
   submit: async (pid, answer, email, isTimeout) => {
-    /*
-    { 
-        result:string (pass, fail), 
-        feedback:string
-    } 
-    */
     try {
       return await axios.post("http://127.0.0.1:8000/codings/submission", {
         pid,

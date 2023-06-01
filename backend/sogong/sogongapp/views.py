@@ -390,7 +390,7 @@ def coding_answer(request):
         #해결한 적 없는 경우 GPT에게 요청
         else:
             gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
-            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+            testcases = CodingTestCase.objects.get(problem = problem_info) #해당 문제의 테스트 케이스를 가져옴
 
             # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
             while answer_validation(gpt_answer, testcases) is False:
@@ -417,9 +417,8 @@ def useranswer_view(request):
         is_timeout  = body.get("isTimeout")
         if username is not None:
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
-            problem_title = problem_info.title
             problem_content = '문제: \n' +problem_info.content_problem + '\n입력 : ' + problem_info.content_input + '\n 출력: ' + problem_info.content_output
-            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+            testcases = CodingTestCase.objects.get(problem = problem_info) #해당 문제의 테스트 케이스를 가져옴
         
             #사용자의 답변이 정확한지 확인
             if is_timeout:
