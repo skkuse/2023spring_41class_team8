@@ -54,6 +54,7 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
               <TableRow style={{ backgroundColor: "#cac6ff" }}>
                 <TableCell>상태</TableCell>
                 <TableCell>레벨</TableCell>
+                <TableCell>제한</TableCell>
                 <TableCell align="middle">문제 이름</TableCell>
               </TableRow>
             </TableHead>
@@ -67,15 +68,23 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell
                     component="th"
-                    style={{ width: "30px", padding: "10px" }}>
-                    {userInfo.solvedCodingProblems.includes(row.pid)
-                      ? "완료"
-                      : "미완"}
+                    style={{
+                      width: "30px",
+                      padding: "10px",
+                      color: userInfo.solvedCodingProblems.includes(row.pid) ? "blue" : "red",
+                    }}>
+                    {userInfo.solvedCodingProblems.includes(row.pid) ? "완료" : "미완"}
                   </TableCell>
+
                   <TableCell
                     align="middle"
                     style={{ width: "30px", padding: "10px" }}>
                     {row.level}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    style={{ width: "30px", padding: "10px" }}>
+                    {row.level === 1 ? "5분" : row.level === 2 ? "10분" : row.level === 3 ? "15분" : "dummy"}
                   </TableCell>
                   <TableCell
                     align="middle"

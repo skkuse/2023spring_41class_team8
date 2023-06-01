@@ -94,10 +94,12 @@ function EthicsProblemList({ getUserInfo, updateUserInfo }) {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                   <TableCell
                     component="th"
-                    style={{ width: "30px", padding: "10px" }}>
-                    {userInfo.solvedEthicsProblems.includes(row.pid)
-                      ? "완료"
-                      : "미완"}
+                    style={{
+                      width: "30px",
+                      padding: "10px",
+                      color: userInfo.solvedEthicsProblems.includes(row.pid) ? "blue" : "red",
+                    }}>
+                    {userInfo.solvedEthicsProblems.includes(row.pid) ? "완료" : "미완"}
                   </TableCell>
                   <TableCell
                     align="middle"
