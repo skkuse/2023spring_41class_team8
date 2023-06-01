@@ -297,6 +297,7 @@ def ethics_view(request):
             ethicsProblem.append({
                 "pid": problem.id,
                 "title": problem.title,
+                "content":problem.content,
                 "optionA": problem.optionA,
                 "optionB": problem.optionB,
                 "submissionA": problem.submissionA,
