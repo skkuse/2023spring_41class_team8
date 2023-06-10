@@ -20,7 +20,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
     # feedback 얻어올시 문제, 입력형식, 출력형식과 함께 사용자가 입력한 코드 전송
     if method == 'feedback':
         prompt = getattr(gpt_prompts, 'GPT_CODE_FEEDBACK')
-        prompt = '문제: \n' + problem_content + '\n' + '답변 CODE: \n'+ answer + '\n' + prompt
+        prompt = problem_content + '\n' + '답변 CODE: \n'+ answer + '\n' + prompt
         messages.append({'role': 'user', 'content': prompt})
     # testcase확인시 사용자가 입력한 코드와 testcase 전송
     elif method == 'testcase':
@@ -86,6 +86,7 @@ def check_password(user, input_word): # 비밀번호 확인
 def get_gpt_answer(problem_text, problem_input, problem_output):
     #!---GPT에게 넘겨주어야 할 것은 문제 텍스트, 문제의 입력값 예시, 문제의 출력값 예시---!
     problem = '문제: \n' + problem_text + '\n입력: \n' + problem_input + '\n출력: \n' + problem_output
+    
     answer = gpt_inference('getanswer', problem_content=problem)
     #!---GPT로 부터 받아온 코드를 answer에 넣고 answer를 반환
     return answer
