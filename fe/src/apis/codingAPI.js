@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const codingAPI = {
   getProblems: async (email) => {
@@ -17,6 +18,7 @@ export const codingAPI = {
         isTimeout,
       });
     } catch (e) {
+      toast.error(`${e.message}`);
       console.log(e);
     }
   },

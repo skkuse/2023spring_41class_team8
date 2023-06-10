@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "code";
+  src: url("font/D2Coding-Ver1.3.2-20180524.ttf") format("truetype");
+  font-weight: normal;
+}
+
 .App {
   text-align: center;
 }

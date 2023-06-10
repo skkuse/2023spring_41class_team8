@@ -11,6 +11,8 @@ import { defineTheme } from "./components/editerStyle/defineTheme";
 import useKeyPress from "./components/editerStyle/useKeyPress";
 import "./codingProblem.css";
 import { codingAPI } from "../../apis/codingAPI";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const pythonDefault = `여기에 입력하세요`;
 
@@ -18,8 +20,9 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   // 필요한 상태 변수들을 선언
   const location = useLocation();
   const data = location.state.data;
-  const [userAnswer, setUserAnswer] = useState("");
-  const [Feedback, setAIFeedBack] = useState("잘했어요");
+
+  const [userAnswer, setUserAnswer] = useState(pythonDefault);
+  const [Feedback, setAIFeedBack] = useState("잠시만 기다려 주세요");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [timer, setTimer] = useState(0);
 
@@ -32,6 +35,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
+  const timerEndCondition = timer === data.level * 10;
 
   // Enter, Ctrl 키를 눌렀을 때의 동작을 처리
   useEffect(() => {
@@ -54,9 +58,11 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     }, 1000);
 
     // 도달하면 handleSaveAnswer 실행 및 타이머 정리
-    if (timer === data.level * 20) {
+    if (timerEndCondition) {
+      console.log("타이머 종료");
       handleSaveAnswer();
       clearInterval(interval);
+      setTimer(0);
     }
 
     return () => {
@@ -79,6 +85,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
 
   // 사용자 답안 저장을 처리하는 함수
   const handleSaveAnswer = () => {
+    toast.info("제출했습니다! 잠시만 기다려주세요.");
     setIsSubmitted(true);
     updateUserAnswer(code);
     let userInfo = getUserInfo();
@@ -86,9 +93,30 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       ...userInfo,
       solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
     });
-    codingAPI.submit(data.pid, code, userInfo.email, true).then((res) => {
-      console.log("submit", res.data);
-    });
+    if (timerEndCondition) {
+      codingAPI.submit(data?.pid, code, userInfo.email, true).then((res) => {
+        if (res.data.result === "pass") {
+          toast.success(`${res.data?.result}`);
+        } else {
+          toast.error(`${res.data?.result}`);
+        }
+
+        updateAIFeedback(res.data?.feedback);
+        console.log(res.data?.feedback);
+        // console.log("submit", res.data);
+      });
+    } else {
+      codingAPI.submit(data?.pid, code, userInfo.email, false).then((res) => {
+        if (res.data.result === "pass") {
+          toast.success(`${res.data?.result}`);
+        } else {
+          toast.error(`${res.data?.result}`);
+        }
+        updateAIFeedback(res.data?.feedback);
+        console.log(res.data);
+        // console.log("submit", res.data);
+      });
+    }
   };
   // 코드 숨기기/보이기 기능을 처리하는 함수
   const handleBlur = () => {
@@ -101,7 +129,6 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   };
   // AI 피드백 업데이트를 수행하는 함수
   const updateAIFeedback = (newFeedback) => {
-    // 피드백 불러오기
     setAIFeedBack(newFeedback);
   };
 
@@ -127,7 +154,9 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
             theme={theme.value}
             isBlurred={isBlurred}
           />
-          <button onClick={handleBlur}>코드 숨기기</button>
+          <button onClick={handleBlur}>
+            {isBlurred ? "코드 보기" : "코드 숨기기"}
+          </button>
         </div>
       </div>
       <div className="coding_problem_feedback">

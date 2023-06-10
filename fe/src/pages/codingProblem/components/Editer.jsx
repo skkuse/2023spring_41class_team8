@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-
+import "./Editor.css";
 import Editor from "@monaco-editor/react";
 
-const CodeEditorWindow = ({ onChange, language, code}) => {
+const CodeEditorWindow = ({ onChange, language, code }) => {
   const [value, setValue] = useState(code || "");
 
   // 코드 변경 핸들러 함수
@@ -12,7 +12,7 @@ const CodeEditorWindow = ({ onChange, language, code}) => {
   };
 
   return (
-    <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl">
+    <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl editor">
       <Editor
         height="60vh"
         width={`100%`}
