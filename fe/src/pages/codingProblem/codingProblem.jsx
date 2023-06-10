@@ -25,6 +25,8 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   const [Feedback, setAIFeedBack] = useState("잠시만 기다려 주세요");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const [correct, setCorrect] = useState(false);
 
   const [code, setCode] = useState(pythonDefault);
   const [AIcode, setAICode] = useState(correctAnswer[0].answer);
@@ -70,6 +72,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     };
   }, [timer]);
 
+  const stopTimer = () => {
+    setIsTimerRunning(false);
+  };
+  
   // 코드 변경 시 호출되는 함수
   const onChange = (action, value) => {
     switch (action) {
@@ -117,6 +123,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
         // console.log("submit", res.data);
       });
     }
+    stopTimer();
   };
   // 코드 숨기기/보이기 기능을 처리하는 함수
   const handleBlur = () => {
@@ -134,7 +141,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
 
   return (
     <div className="coding_problem_container">
-      <ProblemInfo problemData={data} />
+      <ProblemInfo problemData={data} isTimerRunning={isTimerRunning}/>
       <div className="coding_problem_content">
         <div className="coding_problem_editor">
           <Editer
@@ -161,7 +168,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       </div>
       <div className="coding_problem_feedback">
         {isSubmitted && (
-          <AIFeedback userAnswer={userAnswer} updateAIFeedback={Feedback} />
+          <AIFeedback userAnswer={userAnswer} updateAIFeedback={Feedback} correct={correct}/>
         )}
       </div>
     </div>

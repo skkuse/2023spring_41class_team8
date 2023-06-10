@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ProblemInfo.css";
-function ProblemInfo({problemData}) {
+function ProblemInfo({problemData, isTimerRunning}) {
   // 문제 데이터와 타이머 상태 변수를 선언
   const data = problemData;
   const [timer, setTimer] = useState(0);
@@ -11,11 +11,15 @@ function ProblemInfo({problemData}) {
     const interval = setInterval(() => {
       setTimer((prevTimer) => prevTimer + 1);
     }, 1000);
+
+    if (!isTimerRunning) {
+      clearInterval(interval); // 타이머 정지
+    }
     // 컴포넌트가 언마운트될 때 인터벌을 정리
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [isTimerRunning]);
 
   return (
     <div className="coding_problem_container">
