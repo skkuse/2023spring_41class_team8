@@ -52,6 +52,12 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     defineTheme("oceanic-next").then((_) =>
       setTheme({ value: "oceanic-next", label: "Oceanic Next" })
     );
+
+    let userInfo = getUserInfo();
+    codingAPI.getAnswer(data?.pid,userInfo.email).then((res) => {
+        const aiCode = res.data?.answer;
+        setAICode(aiCode);
+      });
   }, []);
 
   useEffect(() => {
@@ -107,8 +113,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       codingAPI.submit(data?.pid, code, userInfo.email, true).then((res) => {
         if (res.data.result === "pass") {
           toast.success(`${res.data?.result}`);
+          setCorrect(true);
         } else {
           toast.error(`${res.data?.result}`);
+          setCorrect(false);
         }
 
         updateAIFeedback(res.data?.feedback);
@@ -119,8 +127,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       codingAPI.submit(data?.pid, code, userInfo.email, false).then((res) => {
         if (res.data.result === "pass") {
           toast.success(`${res.data?.result}`);
+          setCorrect(true);
         } else {
           toast.error(`${res.data?.result}`);
+          setCorrect(false);
         }
         updateAIFeedback(res.data?.feedback);
         console.log(res.data);
