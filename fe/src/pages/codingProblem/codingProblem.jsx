@@ -81,11 +81,12 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   const handleSaveAnswer = () => {
     setIsSubmitted(true);
     updateUserAnswer(code);
+    console.log(code);
     let userInfo = getUserInfo();
     updateUserInfo({
       ...userInfo,
       solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
-    });
+    }); 
     codingAPI.submit(data.pid, code, userInfo.email, true).then((res) => {
       console.log("submit", res.data);
     });
