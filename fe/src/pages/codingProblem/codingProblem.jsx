@@ -91,6 +91,9 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
 
   // 사용자 답안 저장을 처리하는 함수
   const handleSaveAnswer = () => {
+    if (isSubmitted) {
+      return; // 이미 제출된 경우 함수 종료
+    }
     toast.info("제출했습니다! 잠시만 기다려주세요.");
     setIsSubmitted(true);
     updateUserAnswer(code);
