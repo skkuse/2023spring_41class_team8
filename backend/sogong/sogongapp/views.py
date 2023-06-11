@@ -41,7 +41,6 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
     elif method == 'getanswer':
         prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
         messages.append({'role':'user', 'content':problem_content+prompt})
-    print(messages)
     wait = 1
     while True:
         try:
@@ -52,6 +51,7 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
             )
             # message의 content 부분이 gpt response 
             content = response['choices'][0]['message']['content'] 
+            print(answer)
             return content
         except openai.error.RateLimitError:
             print('openai.error.RateLimitError')
@@ -415,6 +415,7 @@ def useranswer_view(request):
         user = User.objects.get(username=username) 
         pid = body.get("pid")
         user_submission = body.get("answer")
+        print(user_submission)
         is_timeout  = body.get("isTimeout")
         if username is not None:
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
@@ -429,7 +430,6 @@ def useranswer_view(request):
                         "result" : "pass",
                         "feedback" : gpt_feedback,
                     }
-                    print(gpt_feedback)
                     solvedCoding = SolvedCoding(user = user, problem = problem_info)
                     solvedCoding.save()
                 else:
@@ -438,7 +438,6 @@ def useranswer_view(request):
                         "result" : "fail",
                         "feedback" : gpt_feedback,
                     }
-                    print(gpt_feedback)
             elif answer_validation(user_submission, testcases):
                 gpt_feedback = get_feedback(problem_content, user_submission)
                 response_data = {
