@@ -4,8 +4,10 @@ Have Fun Learning programming with games!
 - Coding Ethics Balance Game
 
 ## Examples
+### Coding Battle Page
 ![Coding Battle page](docs/ex1.jpg)
 
+### Coding Ethics Balance Game Page
 ![Coding ethics balance game page](docs/ex2.jpg)
 
 ## Collaborators
