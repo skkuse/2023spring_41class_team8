@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import "./register.css";
 import {
   Avatar,
   Button,
@@ -137,7 +138,7 @@ const Register = () => {
 
 
   return (
-    <ThemeProvider theme={theme}>
+    <div className="register_container">
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -148,10 +149,9 @@ const Register = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: '#3c407f' }} />
-          <Typography component="h1" variant="h5">
-            회원가입
-          </Typography>
+          <img src="img/logo.jpg" style={{ width: '250px', height: '100px' }}></img>
+          <h2 className="title">회원가입</h2>
+          
           <Box noValidate sx={{ mt: 3 }}>
             <FormControl component="fieldset" variant="standard">
               <Grid container spacing={2}>
@@ -167,7 +167,7 @@ const Register = () => {
                     onChange={handleEmailChange}
                   />
                   <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <Button variant="contained" onClick={duplicateHandler}>
+                    <Button variant="contained" onClick={duplicateHandler} style={{ backgroundColor: "#3c407f", color: "#ffffff" }}>
                       중복 검사
                     </Button>
                   </Box>
@@ -203,7 +203,7 @@ const Register = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, }}>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit} style={{ backgroundColor: "#3c407f", color: "#ffffff" }}>
             제출
           </Button>
         </Box>
@@ -213,7 +213,7 @@ const Register = () => {
         {failurePopup && <div style={{ color: 'red' }}>* 비밀번호와 비밀번호 확인이 일치하지 않습니다.</div>} {/* 실패 팝업 표시 */}
         
       </Container>
-    </ThemeProvider>
+    </div>
   );
 };
 export default Register;

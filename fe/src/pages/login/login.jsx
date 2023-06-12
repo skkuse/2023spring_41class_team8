@@ -65,8 +65,8 @@ function Login({ getUserInfo, updateUserInfo }) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+    <div className="login_container">
+      <Container component="main" maxWidth="xs" className="login_container">
         <CssBaseline />
         <Box
           sx={{
@@ -75,10 +75,8 @@ function Login({ getUserInfo, updateUserInfo }) {
             flexDirection: "column",
             alignItems: "center",
           }}>
-          <Avatar sx={{ m: 1, bgcolor: "#3c407f" }} />
-          <Typography component="h1" variant="h5">
-            로그인
-          </Typography>
+          <img src="img/logo.jpg" style={{ width: '250px', height: '100px' }}></img>
+          <h2 className="title">로그인</h2>
           <Box noValidate sx={{ mt: 3 }}>
             <FormControl component="fieldset" variant="standard">
               <Grid container spacing={2}>
@@ -111,7 +109,7 @@ function Login({ getUserInfo, updateUserInfo }) {
           </Box>
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit} style={{ backgroundColor: "#3c407f", color: "#ffffff" }}>
             제출
           </Button>
         </Box>
@@ -119,9 +117,9 @@ function Login({ getUserInfo, updateUserInfo }) {
           <div style={{ color: "red" }}>해당 회원 정보가 없습니다.</div>
         )}{" "}
         {/* 실패 팝업 표시 */}
-        <Link to="register">회원 가입</Link>
+        <Link to="register" className="register-link">회원가입</Link>
       </Container>
-    </ThemeProvider>
+    </div>
   );
 }
 

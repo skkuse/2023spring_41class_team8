@@ -1,4 +1,19 @@
 .register {
     color: var(--deep-purple);
     background-color: var(--pale-purple);
-  }
+}
+
+.title{
+  font-size: 24px;
+}
+
+.register_container{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #f2f2f2;
+  padding-bottom: 100px;
+}
+  

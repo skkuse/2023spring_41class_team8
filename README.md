@@ -1,5 +1,5 @@
 # FUNCODING
-<img src="docs/logo.jpg" width="230" height="100"/>
+<img src="docs/logo.jpg" width="250" height="100"/>
 
 Have Fun Learning programming with games!
 - Coding Battle with AI
