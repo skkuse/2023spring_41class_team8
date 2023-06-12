@@ -52,7 +52,6 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     defineTheme("oceanic-next").then((_) =>
       setTheme({ value: "oceanic-next", label: "Oceanic Next" })
     );
-
     let userInfo = getUserInfo();
     codingAPI.getAnswer(data?.pid,userInfo.email).then((res) => {
         const aiCode = res.data?.answer;
@@ -85,6 +84,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   // 코드 변경 시 호출되는 함수
   const onChange = (action, value) => {
     switch (action) {
+      
       case "code": {
         setCode(value);
         break;
@@ -103,17 +103,17 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
     toast.info("제출했습니다! 잠시만 기다려주세요.");
     setIsSubmitted(true);
     updateUserAnswer(code);
-    console.log(code);
     let userInfo = getUserInfo();
-    updateUserInfo({
-      ...userInfo,
-      solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
-    });
+    
     if (timerEndCondition) {
       codingAPI.submit(data?.pid, code, userInfo.email, true).then((res) => {
         if (res.data.result === "pass") {
           toast.success(`${res.data?.result}`);
           setCorrect(true);
+          updateUserInfo({
+            ...userInfo,
+            solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
+          });
         } else {
           toast.error(`${res.data?.result}`);
           setCorrect(false);
@@ -128,6 +128,10 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
         if (res.data.result === "pass") {
           toast.success(`${res.data?.result}`);
           setCorrect(true);
+          updateUserInfo({
+            ...userInfo,
+            solvedCodingProblems: [...userInfo.solvedCodingProblems, data.pid],
+          });
         } else {
           toast.error(`${res.data?.result}`);
           setCorrect(false);
@@ -181,6 +185,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
         </div>
       </div>
       <div className="coding_problem_feedback">
+        
         {isSubmitted && (
           <AIFeedback userAnswer={userAnswer} updateAIFeedback={Feedback} correct={correct}/>
         )}

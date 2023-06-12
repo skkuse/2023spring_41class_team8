@@ -1,3 +1,8 @@
+import logging
+import sys
+import contextlib
+import io
+import os
 from django.http import JsonResponse, HttpResponse
 import sqlite3
 from .models import User
@@ -8,7 +13,7 @@ from .models import SolvedCoding
 from .models import CodingTestCase
 import json
 import openai
-
+import time
 import sogongapp.gpt_prompts as gpt_prompts
 from .API_KEY import OPENAI_API_KEY  
 
@@ -22,21 +27,6 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         prompt = getattr(gpt_prompts, 'GPT_CODE_FEEDBACK')
         prompt = problem_content + '\n' + '답변 CODE: \n'+ answer + '\n' + prompt
         messages.append({'role': 'user', 'content': prompt})
-    # testcase확인시 사용자가 입력한 코드와 testcase 전송
-    elif method == 'testcase':
-        prompt = 'Code: \n' + answer
-        try:
-            # testcase 최대 4개, 4개보다 적을 경우, 존재하는 testcase만 포함
-            tmp_message= ''
-            for i in range(4):
-                if getattr(testcases, f'case_input{i+1}') == 'None': break
-                tmp_message += f'case_input{i+1}: \n' + getattr(testcases, f'case_input{i+1}') + '\n' 
-                tmp_message += f'case_output{i+1} : \n' + getattr(testcases, f'case_output{i+1}') +'\n'
-        except:
-            print(f'\ntestcase 개수 부족: \n {i+1}번째 input case는 존재하지 않습니다.\n')
-        prompt += tmp_message
-        prompt += getattr(gpt_prompts, 'GPT_CODE_CHECK')
-        messages.append({'role': 'user', 'content': prompt})
     # 문제에 대한 gpt의 answer를 불러올 시 문제와 python code 요청
     elif method == 'getanswer':
         prompt = getattr(gpt_prompts, 'GPT_GETANSWER')
@@ -46,12 +36,11 @@ def gpt_inference( method,problem_content=None,  testcases=None, answer=None):
         try:
             response = openai.ChatCompletion.create(
                 model='gpt-3.5-turbo',
-                temperature=1.0,
+                temperature=0.8,
                 messages=messages
             )
             # message의 content 부분이 gpt response 
             content = response['choices'][0]['message']['content'] 
-            print(answer)
             return content
         except openai.error.RateLimitError:
             print('openai.error.RateLimitError')
@@ -81,7 +70,7 @@ def check_password(user, input_word): # 비밀번호 확인
         return True 
     else:
         return False
-    
+  
 #GPT로 부터 답변을 얻어오는 함수
 def get_gpt_answer(problem_text, problem_input, problem_output):
     #!---GPT에게 넘겨주어야 할 것은 문제 텍스트, 문제의 입력값 예시, 문제의 출력값 예시---!
@@ -94,10 +83,41 @@ def get_gpt_answer(problem_text, problem_input, problem_output):
 #답이 유효한지 확인하는 함수
 def answer_validation(answer, testcases):
     #!---GPT에게 넘겨주어야 코드와, 일련의 테스트 케이스 집합---!
-    response = gpt_inference('testcase', testcases=testcases, answer = answer)
-    if 'True' in response:
-        return True
-    else: return False
+    case_inputs = []
+    case_outputs = []
+    for i in range(4):
+        input1 = getattr(testcases, f'case_input{i+1}')
+        output1 = getattr(testcases, f'case_output{i+1}')
+        if input1 == None:
+            break
+        case_inputs.append(input1)
+        case_outputs.append(output1)
+    output = open('./temp/output.txt', 'w+')
+    for i in range(len(case_inputs)):
+        
+        testinput = open('./temp/testinput.txt', 'w+')
+        testinput.write(case_inputs[i])
+        testinput.close()
+        # sys.stdout 재지정
+        try:
+            testcode = open('./temp/testcode.py', 'w+')
+            testcode.write(answer)
+            testcode.close()
+            terminal_command =  "python ./temp/testcode.py < ./temp/testinput.txt > ./temp/output.txt"
+            os.system(terminal_command)
+            f = open('./temp/output.txt', 'r') 
+            output_data = f.read()
+            f.close()
+            output.close()
+            if case_outputs[i] not in output_data:
+                return False
+        except:
+            print('execution error')
+            return False
+    print('success')
+    return True
+    
+
     #!---정상적으로 통과했으면 True를, 통과하지 못했으면 False를 반환
 
 #사용자의 답의 피드백을 받는 함수
@@ -109,6 +129,8 @@ def get_feedback(problem_content, user_submission):
 
 # 로그인  : 1번
 def login_view(request):
+    
+    print(os.getcwd())
     email = request.GET.get('email')
     password = request.GET.get('password')
     
@@ -383,21 +405,22 @@ def coding_answer(request):
         problem_text = problem_info.content_problem
         problem_input = problem_info.content_input
         problem_output = problem_info.content_output
-        gpt_answer = ''  #gpt 답안을 받을 변수 선언
 
         #이미 해결한 적 있는 경우 저장되어 있을 것이므로 CodingSubmission을 찾아서 gpt_answer를 반환
-        if problem_info.gpt_answer is not None:
+        # if problem_info.gpt_answer is not None:
+        #     gpt_answer = problem_info.gpt_answer
+        # #해결한 적 없는 경우 GPT에게 요청
+        # else:
+        
+        gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
+        while gpt_answer is None:
+            time.sleep(1)
+        testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
+
+        # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
+        if answer_validation(gpt_answer, testcases) is False:
+            print("GPT 답변에 문제가 있습니다.")
             gpt_answer = problem_info.gpt_answer
-        #해결한 적 없는 경우 GPT에게 요청
-        else:
-            gpt_answer = get_gpt_answer(problem_text, problem_input, problem_output) #GPT답을 받아오는 함수(구현요망)
-            testcases = CodingTestCase.objects.get(problem = problem_title) #해당 문제의 테스트 케이스를 가져옴
-
-            # 테스트 케이스를 통과하지 못하면 GPT의 답변에 문제가 있는것으로 판단, 재생성
-            while answer_validation(gpt_answer, testcases) is False:
-                print("GPT 답변에 문제가 있습니다.")
-                gpt_answer = problem_info.answer
-
         response_data = {
             "answer" : gpt_answer,
         }
@@ -415,7 +438,6 @@ def useranswer_view(request):
         user = User.objects.get(username=username) 
         pid = body.get("pid")
         user_submission = body.get("answer")
-        print(user_submission)
         is_timeout  = body.get("isTimeout")
         if username is not None:
             problem_info = CodingProblem.objects.get(id=pid) #pid를 통해 전체 문제를 불러온다
@@ -444,13 +466,14 @@ def useranswer_view(request):
                     "result" : "pass",
                     "feedback" : gpt_feedback,
                 }
-                print(gpt_feedback)
+                
                 solvedCoding = SolvedCoding(user = user, problem = problem_info)
                 solvedCoding.save()
             else:
+                gpt_feedback = get_feedback(problem_content, user_submission)
                 response_data = {
                     "result" : "fail",
-                    "feedback" : "",
+                    "feedback" : gpt_feedback,
                 }  #
             return JsonResponse(response_data)
         else:

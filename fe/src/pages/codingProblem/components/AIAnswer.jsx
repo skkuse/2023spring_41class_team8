@@ -23,7 +23,6 @@ const AIAnswer = ({ onChange, language, code, isBlurred }) => {
 
   const handleEditorChange = (value) => {
     setValue(value); // 상태 변수에 값 설정
-    onChange("code", value); // 부모 컴포넌트로 값 전달
   };
 
   const blurClass = isBlurred ? "blur" : ""; // blurClass 변수에 blur 클래스 할당 여부 설정

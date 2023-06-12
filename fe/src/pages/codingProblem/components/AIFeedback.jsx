@@ -3,7 +3,7 @@ import "./AIFeedback.css";
 
 function AIFeedback({ userAnswer, updateAIFeedback , correct}) {
   const [feedback, setFeedback] = useState([""]);
-
+  const [feedbackText, setFeedbackText] = useState("확인 중입니다.");
   const parseAIFeedbackByLine = (feedback) => {
     let lines = feedback.split("\n");
     setFeedback(lines);
@@ -11,10 +11,18 @@ function AIFeedback({ userAnswer, updateAIFeedback , correct}) {
 
   useEffect(() => {
     parseAIFeedbackByLine(updateAIFeedback, correct);
-  }, [updateAIFeedback]);
+    if (updateAIFeedback!="잠시만 기다려 주세요"){
+      if (correct){
+        setFeedbackText("정답입니다.")
+      }
+      else{
+        setFeedbackText("오답입니다.")
+      }
+    }
+   
+  }, [updateAIFeedback, correct]);
 
   const feedbackColor = correct ? "blue" : "red";
-  const feedbackText = correct ? "정답입니다" : "오답입니다";
 
   return (
     <div className="AIFeedbackContainer">
