@@ -86,13 +86,17 @@ def answer_validation(answer, testcases):
     case_inputs = []
     case_outputs = []
     for i in range(4):
-        input1 = getattr(testcases, f'case_input{i+1}')
-        output1 = getattr(testcases, f'case_output{i+1}')
-        if input1 == None:
+        input1 = str(getattr(testcases, f'case_input{i+1}'))
+        output1 = str(getattr(testcases, f'case_output{i+1}'))
+        if input1 == None or input1=='None':
             break
         case_inputs.append(input1)
         case_outputs.append(output1)
     output = open('./temp/output.txt', 'w+')
+    output.close()
+    testcode = open('./temp/testcode.py', 'w+')
+    testcode.write(answer)
+    testcode.close()
     for i in range(len(case_inputs)):
         
         testinput = open('./temp/testinput.txt', 'w+')
@@ -100,17 +104,16 @@ def answer_validation(answer, testcases):
         testinput.close()
         # sys.stdout 재지정
         try:
-            testcode = open('./temp/testcode.py', 'w+')
-            testcode.write(answer)
-            testcode.close()
             terminal_command =  "python ./temp/testcode.py < ./temp/testinput.txt > ./temp/output.txt"
             os.system(terminal_command)
             f = open('./temp/output.txt', 'r') 
             output_data = f.read()
             f.close()
-            output.close()
-            if case_outputs[i] not in output_data:
-                return False
+            if str(case_outputs[i]).strip() in str(output_data).strip() or str(output_data).strip() in str(case_outputs[i]).strip():
+                if output_data.strip() == '':
+                    return False
+                continue
+            else: return False
         except:
             print('execution error')
             return False
