@@ -95,7 +95,7 @@ def answer_validation(answer, testcases):
     output = open('./temp/output.txt', 'w+')
     output.close()
     testcode = open('./temp/testcode.py', 'w+')
-    testcode.write(answer)
+    testcode.write('# -*- coding: utf-8 -*-\n'+answer)
     testcode.close()
     for i in range(len(case_inputs)):
         
