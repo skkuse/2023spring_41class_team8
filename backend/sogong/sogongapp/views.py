@@ -1,7 +1,4 @@
-import logging
-import sys
-import contextlib
-import io
+
 import os
 from django.http import JsonResponse, HttpResponse
 import sqlite3
@@ -94,8 +91,8 @@ def answer_validation(answer, testcases):
         case_outputs.append(output1)
     output = open('./temp/output.txt', 'w+')
     output.close()
-    testcode = open('./temp/testcode.py', 'w+')
-    testcode.write('# -*- coding: utf-8 -*-\n'+answer)
+    testcode = open('./temp/testcode.py', 'w+',encoding= 'utf-8')
+    testcode.write( answer)
     testcode.close()
     for i in range(len(case_inputs)):
         
@@ -111,6 +108,7 @@ def answer_validation(answer, testcases):
             f.close()
             if str(case_outputs[i]).strip() in str(output_data).strip() or str(output_data).strip() in str(case_outputs[i]).strip():
                 if output_data.strip() == '':
+
                     return False
                 continue
             else: return False

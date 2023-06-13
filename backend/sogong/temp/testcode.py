@@ -1,21 +1,13 @@
-# -*- coding: utf-8 -*-
-n = int(input())
-cards = list(map(int, input().split()))
-m = int(input())
-targets = list(map(int, input().split()))
+T = int(input())
 
-count_dict = {}
-for card in cards:
-    if card in count_dict:
-        count_dict[card] += 1
-    else:
-        count_dict[card] = 1
+for _ in range(T):
+    N = int(input())
+    book1 = set(map(int, input().split()))
+    M = int(input())
+    book2 = list(map(int, input().split()))
 
-result = []
-for target in targets:
-    if target in count_dict:
-        result.append(count_dict[target])
-    else:
-        result.append(0)
-
-print(' '.join(map(str, result)))
+    for num in book2:
+        if num in book1:
+            print(1)
+        else:
+            print(0)

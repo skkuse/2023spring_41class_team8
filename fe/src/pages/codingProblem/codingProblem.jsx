@@ -34,7 +34,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
   const [language, setLanguage] = useState(languageOptions[0]);
 
   const [isBlurred, setIsBlurred] = useState(true);
-
+  const [late, setlate] = useState(true);
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const timerEndCondition = timer === data.level * 10;
@@ -124,6 +124,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
         // console.log("submit", res.data);
       });
     } else {
+      setlate(false)
       codingAPI.submit(data?.pid, code, userInfo.email, false).then((res) => {
         if (res.data.result === "pass") {
           toast.success(`${res.data?.result}`);
@@ -187,7 +188,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
       <div className="coding_problem_feedback">
         
         {isSubmitted && (
-          <AIFeedback userAnswer={userAnswer} updateAIFeedback={Feedback} correct={correct}/>
+          <AIFeedback late={late} userAnswer={userAnswer} updateAIFeedback={Feedback} correct={correct}/>
         )}
       </div>
     </div>
