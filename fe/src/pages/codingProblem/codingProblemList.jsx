@@ -16,9 +16,12 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
   const navigate = useNavigate();
   const [data, setData] = useState(codingProblems);
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
-  console.log(userInfo);
+  const [score, setScore] = useState(0);
+  
+
 
   const onClickProblem = (data) => {
+    
     navigate(`/coding/${data.pid}`, {
       state: {
         data,
@@ -26,15 +29,25 @@ function CodingProblemList({ getUserInfo, updateUserInfo }) {
     });
   };
   useEffect(() => {
-    setUserInfo(getUserInfo());
+    const currentUserInfo = getUserInfo();
+    setUserInfo(currentUserInfo);
+  
+    if (currentUserInfo.email !== "test@gmail.com") {
+      const solvedProblems = currentUserInfo.solvedCodingProblems.map((index) => data[index]);
+      const totalScore = solvedProblems.reduce((sum, problem) => sum + problem.level, 0);
+      
+      const updatedUserInfo = { ...currentUserInfo, score: totalScore };
+      console.log(updatedUserInfo);
+      setScore(totalScore)
+    }
   }, []);
-
+  
   return (
     <div className="coding_problem_list_container">
       <div className="coding_problem_score">
         <div>
           <div className="coding_problem_score_info">
-            {`${userInfo.email}님의 점수: 30`}
+            {`${userInfo.email}님의 점수: ${score}` }
           </div>
         </div>
       </div>

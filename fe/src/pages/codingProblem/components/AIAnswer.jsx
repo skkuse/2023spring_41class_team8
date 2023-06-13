@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import "./AIAnswer.css";
 
-const AIAnswer = ({ onChange, language, code, isBlurred }) => {
+const AIAnswer = ({ onChange, language, code, timerEndCondition, isBlurred }) => {
   const [value, setValue] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     // 코드 출력을 위한 인터벌 설정
+    if(timerEndCondition){
+      setValue(code)
+      setCurrentIndex(code.length)
+    }
+    
     const interval = setInterval(() => {
       if (currentIndex < code.length) {
         // 현재 인덱스가 코드 길이보다 작은 경우에만 실행

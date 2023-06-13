@@ -24,7 +24,6 @@ function Login({ getUserInfo, updateUserInfo }) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location);
   const [failurePopup, setFailurePopup] = useState(false);
 
   const handleEmailChange = (e) => {

@@ -174,6 +174,7 @@ function CodingProblem({ getUserInfo, updateUserInfo }) {
 
         <div className="coding_problem_aianswer">
           <AIAnswer
+            timerEndCondition={timerEndCondition}
             code={AIcode}
             onChange={onChange}
             language={language?.value}
